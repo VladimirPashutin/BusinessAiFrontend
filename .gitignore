@@ -1,5 +1,6 @@
 /yandex_business_ai_landing/migrations/versions
 **/package-lock.json
+/instance/users.db
 **/.fastRequest
 **/node_modules
 **/__pycache__
