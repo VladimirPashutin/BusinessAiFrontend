@@ -1,4 +1,7 @@
 {
   // https://nuxt.com/docs/guide/concepts/typescript
+  "compilerOptions": {
+    "allowImportingTsExtensions": true
+  },
   "extends": "./.nuxt/tsconfig.json"
 }
