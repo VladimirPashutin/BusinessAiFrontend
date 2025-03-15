@@ -1,14 +1,18 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import colors from 'tailwindcss/colors'
+import Aura from '@primevue/themes/aura';
 
 export default defineNuxtConfig({
     compatibilityDate: "2025-01-31",
 
-    css: ['primeicons/primeicons.css'],
+    auth: { webAuthn: true },
 
-    devtools: {enabled: true},
+    css: ['primeicons/primeicons.css','./assets/css/main.css'],
 
-    modules: ['@pinia/nuxt', '@primevue/nuxt-module', '@nuxtjs/tailwindcss'],
+    devtools: {enabled: false},
+
+    devServer: { host: '127.0.0.1' },
+
+    modules: ['@pinia/nuxt', '@primevue/nuxt-module', '@nuxtjs/tailwindcss', 'nuxt-auth-utils'],
 
     pinia: {
         storesDirs: ['./stores/**'],
@@ -26,6 +30,11 @@ export default defineNuxtConfig({
                       'Sidebar', 'SplitButton', 'Splitter', 'Steps', 'Stepper', 'TabMenu', 'TabPanel', 'TabView',
                       'Textarea', 'TieredMenu', 'Timeline', 'Toast', 'Toolbar', 'Tooltip', 'Tree', 'TreeTable',
                       'TreeSelect', 'VirtualScroller']
+        },
+        options: {
+            theme: {
+                preset: Aura
+            }
         }
     },
 
@@ -35,9 +44,11 @@ export default defineNuxtConfig({
 
     runtimeConfig: {
         app: {
-            kafkaBroker: '192.168.0.10:29092',
             loginUrl: 'http://localhost:8118/auth/',
-            authAdminUrl: 'http://localhost:8118/auth-admin/'
+            userAdminUrl: 'http://localhost:8118/',
+            businessApiUrl: 'http://localhost:8338/ai/',
+            businessCommonUrl: 'http://localhost:8338/business-common/',
+            registrationUrl: 'http://localhost:8118/auth-registration/'
         }
     },
 
@@ -45,11 +56,6 @@ export default defineNuxtConfig({
 
     tailwindcss: {
         config: {
-            theme: {
-                extend: {
-                    colors: { primary: colors.green }
-                }
-            },
             content: {
                 files: [
                     "./components/**/*.{html,js,jsx,mjs,vue,ts,tsx}",

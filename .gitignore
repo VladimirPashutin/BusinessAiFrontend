@@ -1,3 +1,4 @@
+/utils/typescript-generator-info.json
 !.vscode/extensions.json
 **/package-lock.json
 web-ext.config.ts

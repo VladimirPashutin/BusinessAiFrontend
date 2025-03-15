@@ -1,43 +1,40 @@
 <script setup lang="ts">
+import {ref} from "vue";
 import LoginForm from "./LoginForm.vue";
-import {useLoginStore} from "../stores/loginStore.ts";
 
-const loginStore = useLoginStore();
+defineEmits(['toggleSidebar']);
+
 let loginErrorMessage = ref(null);
 const loginMenu = ref();
 
-const showLoginForm = ref(false)
+const showLogin = ref(false);
 
 const processLogin = (event) => {
-  if(loginStore.authenticated) {
-    loginMenu.value.toggle(event);
-  } else { showLoginForm.value = true; }
+  console.log('Запрос сессии', event);
+  useUserSession().fetch();
 }
 const closeAction = () => {
   loginErrorMessage.value = null;
-  showLoginForm.value = false;
+  showLogin.value = false;
 }
 const loginAction = async (form) => {
-  if(await loginStore.doLogin(form)) { showLoginForm.value = false; console.log(loginStore.userInfo) }
-  else { loginErrorMessage.value = "С указанными данными регистрация в системе невозможна"; }
-  console.log(form)
 }
 const registerAction = (data) => {
-  loginStore.doRegistration(data);
 }
 const restoreAction = (data) => {
-  loginStore.doRestorePassword(data);
 }
 const userLoginIcon = () => {
-  return loginStore.authenticated ? 'pi pi-user' : 'pi pi-sign-in'
+  // return loginStore.authenticated ? 'pi pi-user' : 'pi pi-sign-in';
+  return '';
 }
 const userLoginLabel = () => {
-  return loginStore.authenticated ? loginStore.userInfo.name : 'Войти'
+  // return loginStore.authenticated ? loginStore.userInfo.name : 'Войти';
+  return "";
 }
 const loginMenuItems = ref([
   { label: 'Выйти',
     icon: 'pi pi-sign-out',
-    command: () => { loginStore.doLogout(); closeAction(); }
+    // command: () => { loginStore.doLogout(); closeAction(); }
   }
 ]);
 </script>
@@ -45,11 +42,11 @@ const loginMenuItems = ref([
 <template>
   <Toolbar>
     <template #start>
-      <i class="pi pi-book"/>
+      <img @click="$emit('toggleSidebar')" src="../public/favicon.ico" alt="t3t"/>
     </template>
     <template #center>
       <IconField>
-        <i class="pi pi-search"/>
+        <InputIcon class="pi pi-search"/>
         <InputText placeholder="Search"/>
       </IconField>
     </template>
@@ -59,10 +56,6 @@ const loginMenuItems = ref([
       <TieredMenu ref="loginMenu" id="loginMenu" :model="loginMenuItems" popup />
     </template>
   </Toolbar>
-  <LoginForm :visible="showLoginForm" :error-message="loginErrorMessage" @close="closeAction"
+  <LoginForm :visible="showLogin" :error-message="loginErrorMessage" @close="closeAction"
              @login="loginAction" @register="registerAction" @restore-password="restoreAction"/>
 </template>
-
-<style scoped>
-
-</style>

@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import {ref,toRef} from "vue"
 import {LoginData, RegistrationData} from "../utils/authUtils.ts";
 
-const props = defineProps<{errorMessage?: string, visible: boolean}>();
 const emits = defineEmits(['close','login','register','restorePassword']);
-const showRegistrationInfo = ref(false)
-const showRestorePassword = ref(false)
-const showRegistration = ref(false)
-const showForm = toRef(props, 'visible')
-console.log("Login form show ", showForm.value)
+const props = defineProps<{errorMessage?: string, visible: boolean}>();
+const showDialog = toRef(props, 'visible');
+const showRegistrationInfo = ref(false);
+const showRestorePassword = ref(false);
+const showRegistration = ref(false);
+
 const phoneClicked = (form) => {
   doRegistration(form);
 }
@@ -15,30 +16,29 @@ const passwordClicked = (form) => {
   if(!showRegistration.value) { doLogin(form); }
 }
 const doLogin = (form) => {
-  console.log("Login with", form)
-  showRegistrationInfo.value = false
-  showRestorePassword.value = false
-  showRegistration.value = false
-  emits('login', new LoginData(form))
+  emits('login', new LoginData(form));
+  showRegistrationInfo.value = false;
+  showRestorePassword.value = false;
+  showRegistration.value = false;
 }
 const doRegistration = (form) => {
-  showRegistrationInfo.value = true
-  emits('register', new RegistrationData(form))
+  emits('register', new RegistrationData(form));
+  showRegistrationInfo.value = true;
 }
 const doRestorePassword = (form) => {
-  emits('restorePassword', form.login.value)
+  emits('restorePassword', form.login.value);
   showRestorePassword.value = true;
 }
 const close = () => {
-  showRegistrationInfo.value = false
-  showRestorePassword.value = false
-  showRegistration.value = false
-  emits('close')
+  showRegistrationInfo.value = false;
+  showRestorePassword.value = false;
+  showRegistration.value = false;
+  emits('close');
 }
 </script>
 
 <template>
-  <Dialog :visible="showForm" header="Регистрация в системе." position="topright" @close="close">
+  <Dialog :visible="showDialog" header="Регистрация в системе." position="topright" @update:visible="close">
     <Message v-if="props.errorMessage" severity="error">{{props.errorMessage}}</Message>
     <div v-if="showRestorePassword">
       <Message severity="info">На указанную при регистрации почту отправлено письмо с инструкциями по восстановлению пароля</Message>
@@ -53,50 +53,50 @@ const close = () => {
         <InputGroupAddon>
           <label for="login" class="font-semibold">Имя пользователя:</label>
         </InputGroupAddon>
-        <InputText name="login" style="padding: 10px" class="flex-auto" autocomplete="off" autofocus variant="filled"/>
+        <InputText name="login" class="flex-auto" autocomplete="off" autofocus variant="filled"/>
       </InputGroup>
       <InputGroup>
         <InputGroupAddon>
           <label for="password" class="font-semibold">Пароль:</label>
         </InputGroupAddon>
-        <Password name="password" style="padding: 10px" :feedback="false" @keyup.enter="passwordClicked($form)" variant="filled"/>
+        <Password name="password" :feedback="false" @keyup.enter="passwordClicked($form)" variant="filled"/>
       </InputGroup>
       <div v-if="showRegistration">
         <InputGroup>
           <InputGroupAddon>
             <label for="repeatPassword" class="font-semibold">Повторите пароль:</label>
           </InputGroupAddon>
-          <Password name="repeatPassword" style="padding: 10px" :feedback="false" variant="filled"/>
+          <Password name="repeatPassword" :feedback="false" variant="filled"/>
         </InputGroup>
         <InputGroup>
           <InputGroupAddon>
             <label for="surname" class="font-semibold">Фамилия:</label>
           </InputGroupAddon>
-          <InputText name="surname" style="padding: 10px" class="flex-auto" autocomplete="off" variant="filled"/>
+          <InputText name="surname" class="flex-auto" autocomplete="off" variant="filled"/>
         </InputGroup>
         <InputGroup>
           <InputGroupAddon>
             <label for="personName" class="font-semibold">Имя:</label>
           </InputGroupAddon>
-          <InputText name="personName" style="padding: 10px" class="flex-auto" autocomplete="off" variant="filled"/>
+          <InputText name="personName" class="flex-auto" autocomplete="off" variant="filled"/>
         </InputGroup>
         <InputGroup>
           <InputGroupAddon>
             <label for="patronymic" class="font-semibold">Отчество:</label>
           </InputGroupAddon>
-          <InputText name="patronymic" style="padding: 10px" class="flex-auto" autocomplete="off" variant="filled"/>
+          <InputText name="patronymic" class="flex-auto" autocomplete="off" variant="filled"/>
         </InputGroup>
         <InputGroup>
           <InputGroupAddon>
             <label for="eMail" class="font-semibold">eMail:</label>
           </InputGroupAddon>
-          <InputText name="eMail" style="padding: 10px" class="flex-auto" autocomplete="off" variant="filled"/>
+          <input type="email" name="eMail" class="flex-auto" autocomplete="off"/>
         </InputGroup>
         <InputGroup>
           <InputGroupAddon>
             <label for="phone" class="font-semibold">Телефон:</label>
           </InputGroupAddon>
-          <InputText name="phone" style="padding: 10px" class="flex-auto" @keyup.enter="phoneClicked($form)" autocomplete="off" variant="filled"/>
+          <InputText name="phone" class="flex-auto" @keyup.enter="phoneClicked($form)" autocomplete="off" variant="filled"/>
         </InputGroup>
       </div>
       <ButtonGroup v-if="showRegistration" class="flex justify-end gap-2">
@@ -111,7 +111,3 @@ const close = () => {
     </Form>
   </Dialog>
 </template>
-
-<style scoped>
-
-</style>

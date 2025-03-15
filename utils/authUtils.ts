@@ -1,13 +1,6 @@
-import {jwtDecode} from "jwt-decode"
+import {jwtDecode} from "jwt-decode";
 import {encode} from "js-base64";
 import {Md5} from "ts-md5";
-
-export class UserInfo {
-    communities: string[] | undefined;
-    application: string | undefined;
-    roles: string[] | undefined;
-    name: string | undefined;
-}
 
 export class LoginData {
     password: string;
@@ -41,16 +34,16 @@ export class RegistrationData {
     }
 }
 
-export function getUserInfo(token: string): UserInfo {
-    if(token === null || token === undefined) { return null; }
-    const result = new UserInfo();
-    const jwt = jwtDecode(token);
-    result.communities = jwt['communities'];
-    result.application = 'business-ai';
-    result.name = jwt['userName'];
-    result.roles = jwt['roles'];
-    return result;
-}
+// export function getUserInfo(token: string): UserInfo {
+//     if(token === null || token === undefined) { return null; }
+//     const result = new UserInfo();
+//     const jwt = jwtDecode(token);
+//     result.communities = jwt['communities'];
+//     result.application = 'business-ai';
+//     result.name = jwt['userName'];
+//     result.roles = jwt['roles'];
+//     return result;
+// }
 
 export function isActive(token: string): boolean {
     if(token === null || token === undefined) { return false; }
