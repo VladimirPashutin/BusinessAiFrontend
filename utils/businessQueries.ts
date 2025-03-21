@@ -96,20 +96,6 @@ export interface HttpClient {
     request<R>(requestConfig: { method: string; url: string; queryParams?: any; data?: any; copyFn?: (data: R) => R; }): RestResponse<R>;
 }
 
-export class CommonDataControllerClient {
-
-    constructor(protected httpClient: HttpClient) {
-    }
-
-    /**
-     * HTTP GET /business-common/getAddresses
-     * Java method: ru.pashutin.business_ai.controller.CommonDataController.getAddressesFor
-     */
-    getAddressesFor(queryParams: { addressPart: string; }): RestResponse<AddressObjectList> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`business-common/getAddresses`, queryParams: queryParams });
-    }
-}
-
 export class BusinessAiControllerClient {
 
     constructor(protected httpClient: HttpClient) {
@@ -153,6 +139,20 @@ export class BusinessAiControllerClient {
      */
     takeResponses(): RestResponse<GeneratedResponse[]> {
         return this.httpClient.request({ method: "GET", url: uriEncoding`ai/takeResponses` });
+    }
+}
+
+export class CommonDataControllerClient {
+
+    constructor(protected httpClient: HttpClient) {
+    }
+
+    /**
+     * HTTP GET /business-common/getAddresses
+     * Java method: ru.pashutin.business_ai.controller.CommonDataController.getAddressesFor
+     */
+    getAddressesFor(queryParams: { addressPart: string; }): RestResponse<AddressObjectList> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`business-common/getAddresses`, queryParams: queryParams });
     }
 }
 
