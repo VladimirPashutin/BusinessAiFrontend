@@ -29,8 +29,36 @@
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>ru.pashutin</groupId>
+            <artifactId>auth-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ru.pashutin</groupId>
+            <artifactId>business-ai-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
+            <plugin>
+                <groupId>cz.habarta.typescript-generator</groupId>
+                <artifactId>typescript-generator-maven-plugin</artifactId>
+                <configuration>
+                    <classes>
+                        <class>ru.pashutin.auth.controller.AuthAdministrationController</class>
+                        <class>ru.pashutin.auth.controller.AuthRegistrationController</class>
+                        <class>ru.pashutin.business_ai.controller.BusinessAiController</class>
+                        <class>ru.pashutin.business_ai.controller.CommonDataController</class>
+                    </classes>
+                    <jsonLibrary>jaxb</jsonLibrary>
+                    <outputKind>module</outputKind>
+                    <outputFile>${project.basedir}/utils/apiQueries.ts</outputFile>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>

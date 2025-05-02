@@ -4,18 +4,16 @@ import Aura from '@primevue/themes/aura';
 export default defineNuxtConfig({
     compatibilityDate: "2025-01-31",
 
-    auth: { webAuthn: true },
-
-    css: ['primeicons/primeicons.css','./assets/css/main.css'],
+    css: ['primeicons/primeicons.css', 'primeflex/primeflex.css','./assets/css/main.css'],
 
     devtools: {enabled: false},
 
     devServer: { host: '127.0.0.1' },
 
-    modules: ['@pinia/nuxt', '@primevue/nuxt-module', '@nuxtjs/tailwindcss', 'nuxt-auth-utils'],
+    modules: ['@pinia/nuxt', '@primevue/nuxt-module', 'nuxt-auth-utils'],
 
     pinia: {
-        storesDirs: ['./stores/**'],
+        storesDirs: ['./stores/**']
     },
 
     primevue: {
@@ -44,30 +42,14 @@ export default defineNuxtConfig({
 
     runtimeConfig: {
         app: {
-            loginUrl: 'http://localhost:8118/auth/',
+            applicationName: 'business-ai',
+            loginUrl: 'http://localhost:8118/',
             userAdminUrl: 'http://localhost:8118/',
+            registrationUrl: 'http://localhost:8118/',
             businessApiUrl: 'http://localhost:8338/ai/',
-            businessCommonUrl: 'http://localhost:8338/business-common/',
-            registrationUrl: 'http://localhost:8118/auth-registration/'
+            businessCommonUrl: 'http://localhost:8338/business-common/'
         }
     },
 
-    ssr: true,
-
-    tailwindcss: {
-        config: {
-            content: {
-                files: [
-                    "./components/**/*.{html,js,jsx,mjs,vue,ts,tsx}",
-                    "./layouts/**/*.{html,js,jsx,mjs,vue,ts,tsx}",
-                    "./pages/**/*.{html,js,jsx,mjs,vue,ts,tsx}",
-                    "./*.vue"
-                ]
-            }
-        }
-    },
-
-    typescript: {
-        strict: false
-    }
+    ssr: true
 })

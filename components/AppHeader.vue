@@ -1,42 +1,8 @@
 <script setup lang="ts">
-import {ref} from "vue";
-import LoginForm from "./LoginForm.vue";
+import LoginHandler from "~/components/LoginHandler.vue";
 
 defineEmits(['toggleSidebar']);
 
-let loginErrorMessage = ref(null);
-const loginMenu = ref();
-
-const showLogin = ref(false);
-
-const processLogin = (event) => {
-  console.log('Запрос сессии', event);
-  useUserSession().fetch();
-}
-const closeAction = () => {
-  loginErrorMessage.value = null;
-  showLogin.value = false;
-}
-const loginAction = async (form) => {
-}
-const registerAction = (data) => {
-}
-const restoreAction = (data) => {
-}
-const userLoginIcon = () => {
-  // return loginStore.authenticated ? 'pi pi-user' : 'pi pi-sign-in';
-  return '';
-}
-const userLoginLabel = () => {
-  // return loginStore.authenticated ? loginStore.userInfo.name : 'Войти';
-  return "";
-}
-const loginMenuItems = ref([
-  { label: 'Выйти',
-    icon: 'pi pi-sign-out',
-    // command: () => { loginStore.doLogout(); closeAction(); }
-  }
-]);
 </script>
 
 <template>
@@ -51,11 +17,7 @@ const loginMenuItems = ref([
       </IconField>
     </template>
     <template #end>
-      <Button :label="userLoginLabel()" :icon="userLoginIcon()"
-              @click="processLogin" aria-haspopup="true" aria-controls="overlay_tmenu"/>
-      <TieredMenu ref="loginMenu" id="loginMenu" :model="loginMenuItems" popup />
+      <LoginHandler/>
     </template>
   </Toolbar>
-  <LoginForm :visible="showLogin" :error-message="loginErrorMessage" @close="closeAction"
-             @login="loginAction" @register="registerAction" @restore-password="restoreAction"/>
 </template>
