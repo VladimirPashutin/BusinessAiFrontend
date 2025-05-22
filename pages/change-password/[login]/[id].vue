@@ -1,9 +1,7 @@
 <script setup lang="ts">
+import {ApiHttpClient} from "~/utils/clientProvider.ts";
 import {makeCredentialsFromData} from "~/utils/login.d.ts";
-import {RegistrationHttpClient} from "~/utils/clientProvider.ts";
 import {AuthRegistrationControllerClient} from "~/utils/apiQueries.ts"
-
-const registrationClient = new AuthRegistrationControllerClient(new RegistrationHttpClient());
 
 const errorMessage = ref(<string | null>null);
 
@@ -28,7 +26,7 @@ const doChangePassword = async (form) => {
       passwordHash: makeCredentialsFromData(<string>route.params.login, form.password.value),
       id: <string>route.params.id
     });
-    await registrationClient.changePassword(data);
+    await new AuthRegistrationControllerClient(new ApiHttpClient()).changePassword(data);
     close();
   }
 }

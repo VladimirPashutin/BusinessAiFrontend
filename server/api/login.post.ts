@@ -8,8 +8,7 @@ export default defineEventHandler(async (event) => {
         const loginRequest = new LoginRequest({application: runtimeConfig.app.applicationName,
                                                credentials: credentials, authType: "BEARER", params: {}});
         // @ts-ignore
-        const data: UserSession.jwt = await $fetch(runtimeConfig.app.loginUrl + "auth/login",
-                                                  { method: "POST", body: JSON.stringify(loginRequest) })
+        const data: UserSession.jwt = await $fetch("/auth/login", { method: "POST", body: JSON.stringify(loginRequest) })
         if(data.accessToken !== null && data.refreshToken !== null) {
             const jwt = jwtDecode(data.accessToken);
             await setUserSession(event, {

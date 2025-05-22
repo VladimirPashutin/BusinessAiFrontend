@@ -13,7 +13,7 @@ export class LoginData {
     credentials: string;
     login: string;
     constructor(form) {
-        this.credentials = makeCredentials(form);
+        this.credentials = makeCredentialsByForm(form);
         this.login = form.login.value;
     }
 }

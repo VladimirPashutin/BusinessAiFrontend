@@ -2,9 +2,7 @@
 import {ref} from "vue"
 import Button from 'primevue/button';
 import LoginForm from "~/components/LoginForm.vue";
-import {ApiHttpClient} from "~/utils/clientProvider.ts";
-import {AuthAdministrationControllerClient} from "~/utils/apiQueries.ts";
-const { loggedIn, user, clear, fetch: refreshSession } = useUserSession()
+const { loggedIn, user, clear, fetch: refreshSession } = useUserSession();
 
 const loginMenu = ref();
 const showLoginForm = ref(false);
@@ -19,10 +17,14 @@ const processLogin = (event) => {
   if(loggedIn.value) { loginMenu.value.toggle(event) }
   else { showLoginForm.value = true }
 }
+const processLogout = async () => {
+  await navigateTo("/");
+  await clear();
+}
 const loginMenuItems = ref([
   { label: 'Выйти',
     icon: 'pi pi-sign-out',
-    command: () => { clear(); }
+    command: () => { processLogout(); }
   }
 ]);
 const loginFinished = () => {

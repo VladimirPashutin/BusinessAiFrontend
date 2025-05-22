@@ -12,7 +12,7 @@ const prepareCandidates = () => {
   //                      then((value) => candidates.value = value === null ? [] : value.addressObject);
 }
 const header = () => {
-  if(addressType.value === null || addressInfo.value === null) { return "Адрес не указан"; }
+  if(addressInfo.value === null) { return "Адрес не указан"; }
   return addressType.value + ": " + addressInfo.value;
 }
 let addressValue = addressInfo.value === null ? "" : addressInfo.value;

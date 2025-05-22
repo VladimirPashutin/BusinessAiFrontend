@@ -1,49 +1,98 @@
 <script setup lang="ts">
 import AppHeader from "~/components/AppHeader.vue";
+import {BusinessAiControllerClient} from "~/utils/apiQueries.ts"
+import {ApiHttpClient, newOrganization} from "~/utils/clientProvider.ts";
 
-const showMainMenu = ref(true);
+const selectedOrganization = ref(null as string | null);
 
-const toggleMainMenu = () => {
-  showMainMenu.value = !showMainMenu.value;
-  console.log("Switch menu to", showMainMenu.value);
+const selectOrganization = (name: string) => {
+  selectedOrganization.value = name;
+  navigateTo("/");
 }
+
+const getOrgName = (): string => {
+  if(selectedOrganization.value === null) {
+    const {user} = useUserSession();
+    return user.value.communities[0];
+  } else { return selectedOrganization.value; }
+}
+
+const navigateToHome = async () => {
+  await navigateTo("/");
+}
+
+const showMainMenu = () => {
+  const {loggedIn} = useUserSession();
+  return loggedIn.value;
+}
+
 const mainMenuItems = ref([
   {
-    label: 'Профиль',
-    icon: 'pi pi-building-columns',
-    command: ()  => {
-      navigateTo('/profile')
-    }
-  },
-  {
-    label: 'Публикации',
+    label: 'Профиль компании',
     items: [
       {
-        label: 'Список последних',
-        command: () => { navigateTo('/lastpublications')}
+        label: 'Данные организации',
+        icon: 'pi pi-building-columns',
+        command: async ()  => {
+          navigateTo('/organization/' + getOrgName())
+        }
       },
       {
-        label: 'Запланировать публикацию',
-        icon: 'pi pi-file-plus',
-        command: () => { navigateTo('/newpublication')}
+        label: 'Номенклатура продукции/услуг',
+        icon: 'pi pi-gift',
+        command: async ()  => {
+          navigateTo('/assortment/' + getOrgName());
+        }
       }
     ]
   },
   {
-    label: 'Ответы на отзывы',
+    label: 'Журнал',
     items: [
       {
-        label: 'Список последних',
-        command: () => { navigateTo('/lastreviews')}
+        label: 'Отзывы',
+        items: [
+          {
+            label: 'Обработанные',
+            icon: 'pi pi-megaphone',
+            command: async () => {
+              navigateTo('/reviews/' + getOrgName());
+            }
+          },
+          {
+            label: 'Инциденты',
+            icon: 'pi pi-thumbs-down',
+            command: async () => {
+              navigateTo('/incidents/' + getOrgName());
+            }
+          }
+        ]
       },
       {
-        label: 'Список шаблонов',
-        command: () => { navigateTo('/templates')}
+        label: 'Публикации',
+        icon: 'pi pi-book',
+        command: async () => {
+          navigateTo('/publications/' + getOrgName());
+        }
+      }
+    ]
+  },
+  {
+    label: 'Настройки',
+    items: [
+      {
+        label: 'Режим публикаций',
+        icon: 'pi pi-receipt',
+        command: async () => {
+          navigateTo('/publications-plan/' + getOrgName());
+        }
       },
       {
-        label: 'Добавить шаблон',
-        icon: 'pi pi-file-plus',
-        command: () => { navigateTo('/newtemplate')}
+        label: 'Стратегия формирования отзывов',
+        icon: 'pi pi-receipt',
+        command: async () => {
+          navigateTo('/reviews-plan/' + getOrgName());
+        }
       }
     ]
   }
@@ -52,9 +101,9 @@ const mainMenuItems = ref([
 
 <template>
   <div class="px-4">
-    <AppHeader @toggle-sidebar="toggleMainMenu"/>
+    <AppHeader @navigate-to-home="navigateToHome" @setOrgName="selectOrganization"/>
     <div class="flex flex-row flex-nowrap">
-      <Menu class="h-auto" v-if="showMainMenu" :model="mainMenuItems"/>
+      <Menu class="h-auto" v-if="showMainMenu()" :model="mainMenuItems"/>
       <slot />
     </div>
   </div>

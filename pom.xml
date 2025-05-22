@@ -49,11 +49,16 @@
                 <artifactId>typescript-generator-maven-plugin</artifactId>
                 <configuration>
                     <classes>
-                        <class>ru.pashutin.auth.controller.AuthAdministrationController</class>
+                        <class>ru.pashutin.auth.controller.AuthenticationController</class>
                         <class>ru.pashutin.auth.controller.AuthRegistrationController</class>
+                        <class>ru.pashutin.auth.controller.AuthAdministrationController</class>
                         <class>ru.pashutin.business_ai.controller.BusinessAiController</class>
                         <class>ru.pashutin.business_ai.controller.CommonDataController</class>
                     </classes>
+                    <excludeClasses>
+                        <excludeClass>org.springframework.core.io.Resource</excludeClass>
+                        <excludeClass>org.springframework.web.multipart.MultipartFile</excludeClass>
+                    </excludeClasses>
                     <jsonLibrary>jaxb</jsonLibrary>
                     <outputKind>module</outputKind>
                     <outputFile>${project.basedir}/utils/apiQueries.ts</outputFile>

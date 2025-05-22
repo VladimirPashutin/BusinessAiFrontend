@@ -1,4 +1,5 @@
 import {jwtDecode} from "jwt-decode";
+// @ts-ignore
 import type {UserSession} from "#auth-utils";
 import {RefreshRequest} from "~/utils/apiQueries";
 
@@ -12,14 +13,12 @@ export default defineEventHandler(async (event) => {
         await clearUserSession(event);
         return;
     }
-    const runtimeConfig = useRuntimeConfig();
     if(1000 * refreshExpiration < Date.now() + 30000) {
         const request: RefreshRequest = new RefreshRequest({
             refreshToken: tokens.refreshToken,
             accessToken: tokens.accessToken
         })
-        const data: UserSession["jwt"] = await $fetch(runtimeConfig.app.loginUrl + "auth/refresh",
-            { method: "POST", body: JSON.stringify(request) })
+        const data: UserSession["jwt"] = await $fetch("/auth/refresh", { method: "POST", body: JSON.stringify(request) })
         if(data === undefined) { await clearUserSession(event); return; }
         if(data.accessToken !== null && data.refreshToken !== null) {
             const jwt = jwtDecode(data.accessToken);
@@ -40,7 +39,7 @@ export default defineEventHandler(async (event) => {
             return;
         }
     } else if(1000 * accessExpiration < Date.now() + 10000) {
-        const accessToken = await $fetch(runtimeConfig.app.loginUrl + "auth/token",
+        const accessToken = await $fetch("/auth/token",
             { method: "POST", body: tokens.refreshToken }).catch((e) => {
                 console.warn("Ошибка обновления токена", e);
                 clearUserSession(event);
