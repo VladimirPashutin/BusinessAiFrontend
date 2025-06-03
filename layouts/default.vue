@@ -28,83 +28,42 @@ const showMainMenu = () => {
 
 const mainMenuItems = ref([
   {
-    label: 'Профиль компании',
-    items: [
-      {
-        label: 'Данные организации',
-        icon: 'pi pi-building-columns',
-        command: async ()  => {
-          navigateTo('/organization/' + getOrgName())
-        }
-      },
-      {
-        label: 'Номенклатура продукции/услуг',
-        icon: 'pi pi-gift',
-        command: async ()  => {
-          navigateTo('/assortment/' + getOrgName());
-        }
-      }
-    ]
+    label: 'Данные организации',
+    icon: 'pi pi-building-columns',
+    command: async ()  => {
+      navigateTo('/organization/' + getOrgName())
+    }
   },
   {
-    label: 'Журнал',
-    items: [
-      {
-        label: 'Отзывы',
-        items: [
-          {
-            label: 'Обработанные',
-            icon: 'pi pi-megaphone',
-            command: async () => {
-              navigateTo('/reviews/' + getOrgName());
-            }
-          },
-          {
-            label: 'Инциденты',
-            icon: 'pi pi-thumbs-down',
-            command: async () => {
-              navigateTo('/incidents/' + getOrgName());
-            }
-          }
-        ]
-      },
-      {
-        label: 'Публикации',
-        icon: 'pi pi-book',
-        command: async () => {
-          navigateTo('/publications/' + getOrgName());
-        }
-      }
-    ]
+    label: 'Номенклатура продукции/услуг',
+    icon: 'pi pi-gift',
+    command: async ()  => {
+      navigateTo('/assortment/' + getOrgName());
+    }
   },
   {
-    label: 'Настройки',
-    items: [
-      {
-        label: 'Режим публикаций',
-        icon: 'pi pi-receipt',
-        command: async () => {
-          navigateTo('/publications-plan/' + getOrgName());
-        }
-      },
-      {
-        label: 'Стратегия формирования отзывов',
-        icon: 'pi pi-receipt',
-        command: async () => {
-          navigateTo('/reviews-plan/' + getOrgName());
-        }
-      }
-    ]
+    label: 'Отзывы',
+    icon: 'pi pi-megaphone',
+    command: async () => {
+      navigateTo('/reviews/' + getOrgName());
+    }
+  },
+  {
+    label: 'Публикации',
+    icon: 'pi pi-book',
+    command: async () => {
+      navigateTo('/publications/' + getOrgName());
+    }
   }
 ])
 </script>
 
 <template>
-  <div class="px-4">
+  <div>
     <AppHeader @navigate-to-home="navigateToHome" @setOrgName="selectOrganization"/>
-    <div class="flex flex-row flex-nowrap">
-      <Menu class="h-auto" v-if="showMainMenu()" :model="mainMenuItems"/>
-      <slot />
+    <div style="min-height: 90svh" class="flex">
+      <Menu class="basis-1/4 h-full" v-if="showMainMenu()" :model="mainMenuItems"/>
+      <slot class="basis-3/4 h-full"/>
     </div>
   </div>
 </template>

@@ -4,15 +4,15 @@ import Aura from '@primevue/themes/aura';
 export default defineNuxtConfig({
     compatibilityDate: "2025-01-31",
 
-    css: ['primeicons/primeicons.css', 'primeflex/primeflex.css'],
+    css: ['primeicons/primeicons.css'],
 
     devServer: { host: 'localhost',
       cors: { origin: "*", methods: "*", allowHeaders: "*" }
     },
 
-    devtools: {enabled: true},
+    devtools: {enabled: false},
 
-    modules: ['@primevue/nuxt-module', 'nuxt-auth-utils'],
+    modules: ['@primevue/nuxt-module', 'nuxt-auth-utils', '@nuxtjs/tailwindcss'],
 
     primevue: {
         components: {

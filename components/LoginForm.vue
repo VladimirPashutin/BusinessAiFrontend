@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {form} from "@primevue/metadata";
+import {Form} from "@primevue/forms";
 import {ref, computed} from "@vue/reactivity";
 import {ApiHttpClient} from "../utils/clientProvider.ts";
 import {makeCredentialsByForm, makeCredentialsFromData} from "../utils/login.d.ts";
@@ -45,6 +45,19 @@ const [loginModel] = defineModel({
     return value;
   }
 })
+
+const resolver = ({ values }) => {
+  const errors = {} as any;
+
+  if (!values.login) {
+    errors.login = [{ message: 'Логин для входа в систему обязательно должен быть указан.' }];
+  }
+
+  return {
+    values, // (Optional) Used to pass current form values to submit event.
+    errors
+  };
+};
 
 const initState = () => {
   showRegistrationForm.value = false;
@@ -136,17 +149,17 @@ const close = () => {
       <Message severity="info">На указанную почту отправлено письмо для подтверждения регистрации</Message>
       <Button label="Закрыть" icon="pi pi-check" severity="success" @click="close" raised/>
     </div>
-    <Form v-else v-slot="$form" @submit="doLogin($form)">
+    <Form v-else v-slot="$form" :resolver @submit="doLogin($form)">
       <InputGroup>
         <InputGroupAddon>
-          <label for="login" class="font-semibold">Имя пользователя:</label>
+          <label for="login">Имя пользователя:</label>
         </InputGroupAddon>
         <InputText id="login" name="login" type="text" variant="filled"
                    autocomplete="username" autofocus v-model="loginModel"/>
       </InputGroup>
       <InputGroup>
         <InputGroupAddon>
-          <label for="password" class="font-semibold">Пароль:</label>
+          <label for="password">Пароль:</label>
         </InputGroupAddon>
         <Password id="password" name="password" type="password" :feedback="false" variant="filled"
                   :inputProps="{ autocomplete: 'current-password' }" @keyup.enter="passwordClicked($form)"/>
@@ -154,60 +167,54 @@ const close = () => {
       <div v-if="showRegistrationForm">
         <InputGroup>
           <InputGroupAddon>
-            <label for="repeatPassword" class="font-semibold">Повторите пароль:</label>
+            <label for="repeatPassword">Повторите пароль:</label>
           </InputGroupAddon>
           <Password id="repeatPassword" name="repeatPassword" type="password"
                     :feedback="false" variant="filled" :inputProps="{ autocomplete: 'off' }"/>
         </InputGroup>
         <InputGroup>
           <InputGroupAddon>
-            <label for="organization" class="font-semibold">Организация:</label>
+            <label for="organization">Организация:</label>
           </InputGroupAddon>
           <InputText id="organization" name="organization" variant="filled"/>
         </InputGroup>
         <InputGroup>
           <InputGroupAddon>
-            <label for="surname" class="font-semibold">Фамилия:</label>
+            <label for="surname">Фамилия:</label>
           </InputGroupAddon>
           <InputText id="surname" name="surname" type="text" variant="filled"/>
         </InputGroup>
         <InputGroup>
           <InputGroupAddon>
-            <label for="personName" class="font-semibold">Имя:</label>
+            <label for="personName">Имя:</label>
           </InputGroupAddon>
           <InputText id="personName" name="personName" variant="filled"/>
         </InputGroup>
         <InputGroup>
           <InputGroupAddon>
-            <label for="patronymic" class="font-semibold">Отчество:</label>
+            <label for="patronymic">Отчество:</label>
           </InputGroupAddon>
-          <InputText id="patronymic" name="patronymic" class="flex-auto" variant="filled"/>
+          <InputText id="patronymic" name="patronymic" variant="filled"/>
         </InputGroup>
         <InputGroup>
           <InputGroupAddon>
-            <label for="birthday" class="font-semibold">День рождения:</label>
+            <label for="eMail">eMail:</label>
           </InputGroupAddon>
-          <DatePicker id="birthday" name="birthday" class="flex-auto"/>
+          <InputText type="email" id="eMail" name="eMail"/>
         </InputGroup>
         <InputGroup>
           <InputGroupAddon>
-            <label for="eMail" class="font-semibold">eMail:</label>
+            <label for="phone">Телефон:</label>
           </InputGroupAddon>
-          <InputText type="email" id="eMail" name="eMail" class="flex-auto"/>
-        </InputGroup>
-        <InputGroup>
-          <InputGroupAddon>
-            <label for="phone" class="font-semibold">Телефон:</label>
-          </InputGroupAddon>
-          <InputText id="phone" name="phone" class="flex-auto" @keyup.enter="phoneClicked($form)" variant="filled"/>
+          <InputText id="phone" name="phone" @keyup.enter="phoneClicked($form)" variant="filled"/>
         </InputGroup>
       </div>
-      <ButtonGroup v-if="showRegistrationForm" class="flex justify-end gap-2">
+      <ButtonGroup v-if="showRegistrationForm">
         <Button label="Назад" icon="pi pi-arrow-left" severity="secondary" @click="showRegistrationForm=false" raised/>
         <Button label="Зарегистрироваться" icon="pi pi-user" severity="info" size="small" @click="doRegistration($form)"
                 raised :disabled="validLogin"/>
       </ButtonGroup>
-      <ButtonGroup v-else class="flex justify-end gap-2">
+      <ButtonGroup v-else>
         <Button label="Новый пользователь" icon="pi pi-user" :disabled="validLogin"
                 severity="info" size="small" @click="showRegistrationForm=true" raised/>
         <Button label="Восстановить пароль" icon="pi pi-ellipsis-v" :disabled="!validLogin"

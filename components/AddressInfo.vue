@@ -3,7 +3,7 @@ import {ref,toRef} from "vue";
 
 defineEmits(['update']);
 const props = withDefaults(defineProps<{address: AddressObject, addressType?: string}>(),
-                               {addressType: 'Почтовый адрес'});
+                                       {addressType: 'Почтовый адрес'});
 const addressType = toRef(props, "addressType");
 const addressInfo = toRef(props, "address");
 const candidates = ref([]);

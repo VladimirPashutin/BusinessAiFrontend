@@ -22,8 +22,8 @@ const saveUpdatedOrganization = async () => {
 </script>
 
 <template>
-  <div class="flex flex-column gap-2 w-full">
-    <Toolbar class="gap-2">
+  <div class="w-full">
+    <Toolbar>
       <template #center>
         <h3>Уточните данные по вашей организации</h3>
       </template>

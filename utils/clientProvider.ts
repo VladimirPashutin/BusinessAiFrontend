@@ -61,18 +61,30 @@ export class FileUploadClient implements HttpClient {
         if(requestConfig.queryParams === null) { return new Promise<R>(() => {}); }
         const token = await refreshTokens();
         const keys = Object.keys(requestConfig.queryParams);
-        let url = "/" + requestConfig.url;
         const data = new FormData();
         keys.forEach(key => { data.append(key, requestConfig.queryParams[key])})
-        if (token === null) {
-            //@ts-ignore
-            return $fetch(url, { method: requestConfig.method, body: data});
+        if (requestConfig.url.startsWith('http')) {
+            if (token === null) {
+                //@ts-ignore
+                return $fetch("", { baseURL: requestConfig.url, method: requestConfig.method, body: data});
+            } else {
+                //@ts-ignore
+                return $fetch("", { baseURL: requestConfig.url, method: requestConfig.method, headers: {
+                        "Authorization": token
+                    }, body: data
+                });
+            }
         } else {
-            //@ts-ignore
-            return $fetch(url, { method: requestConfig.method, headers: {
-                                "Authorization": token
-                }, body: data
-            });
+            if (token === null) {
+                //@ts-ignore
+                return $fetch("/" + requestConfig.url, { method: requestConfig.method, body: data});
+            } else {
+                //@ts-ignore
+                return $fetch("/" + requestConfig.url, { method: requestConfig.method, headers: {
+                        "Authorization": token
+                    }, body: data
+                });
+            }
         }
     }
 

@@ -37,23 +37,23 @@ const close = () => {
 
 <template>
   <Dialog :visible="dialogVisible" :header="formHeader()"  style="width: 24rem" position="center" @update:visible="close">
-    <Form v-slot="$form" @submit="doChangePassword($form)" class="flex flex-col w-full">
+    <Form v-slot="$form" @submit="doChangePassword($form)">
       <Message v-if="errorMessage" severity="error">{{errorMessage}}</Message>
       <InputGroup>
         <InputGroupAddon>
-          <label for="password" class="font-semibold">Пароль:</label>
+          <label for="password">Пароль:</label>
         </InputGroupAddon>
         <Password name="password" type="password" :feedback="false"
                   variant="filled" :inputProps="{ autocomplete: 'off' }"/>
       </InputGroup>
       <InputGroup>
         <InputGroupAddon>
-          <label for="repeatPassword" type="password" class="font-semibold">Повторите пароль:</label>
+          <label for="repeatPassword" type="password">Повторите пароль:</label>
         </InputGroupAddon>
         <Password name="repeatPassword" type="password" :feedback="false"
                   variant="filled" :inputProps="{ autocomplete: 'off' }"/>
       </InputGroup>
-      <ButtonGroup class="flex justify-end gap-2">
+      <ButtonGroup>
         <Button label="Закрыть" icon="pi pi-close" severity="secondary" @click="close" raised/>
         <Button label="Сохранить" icon="pi pi-user" severity="info" size="small" @click="doChangePassword($form)" raised/>
       </ButtonGroup>

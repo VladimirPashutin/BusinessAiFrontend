@@ -16,7 +16,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-column gap-2 w-full">
+  <div>
     <InputGroup>
       <InputGroupAddon>
         <label>Полное наименование организации</label>
@@ -24,7 +24,7 @@ onMounted(() => {
       <InputText v-model="organization.fullOrganizationName"
                  @change="$emit('update', organization)"/>
     </InputGroup>
-    <InputGroup class="gap-2">
+    <InputGroup>
       <InputGroupAddon>
         <label>ИНН</label>
       </InputGroupAddon>
@@ -36,7 +36,7 @@ onMounted(() => {
       <InputText v-model="organization.okfs"
                  @change="$emit('update', organization)"/>
     </InputGroup>
-    <InputGroup class="gap-2">
+    <InputGroup>
       <InputGroupAddon>
         <label>ОГРН</label>
       </InputGroupAddon>

@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import {v4 as uuidv4} from 'uuid';
 import {onMounted, ref} from "vue";
 import {ApiHttpClient} from "~/utils/clientProvider.ts";
 import AssortmentInfo from "~/components/AssortmentInfo.vue";
 import {type Assortment, CommonDataControllerClient} from "~/utils/apiQueries.ts";
 
 const route = useRoute();
-const organizationId = ref(null as string);
+const organizationId = ref(null as any as string);
 const assortments = ref([] as Assortment[]);
 
 onMounted(async () => {
@@ -20,14 +21,41 @@ const updateAssortmentInfo = (assortment: Assortment) => {
   commonClient.saveAssortment(organizationId.value, assortment);
 }
 
-const addAssortment = () => {
+const deleteAssortment = async (assortment: Assortment) => {
+  const commonClient = new CommonDataControllerClient(new ApiHttpClient());
+  await commonClient.deleteAssortment(assortment.id);
+  let index: number = -1;
+  for(const i in assortments.value) {
+    if(assortments.value[i].id === assortment.id) {
+      index = i;
+      break;
+    }
+  }
+  if(index >= 0) {
+    assortments.value.splice(index, 1);
+  }
+}
 
+const addAssortment = () => {
+  //@ts-ignore
+  assortments.value.push(new Assortment({
+    description: "Описание ассортиментной позиции",
+    measurement: "Единица измерения",
+    name: "Наименование",
+    article: "Артикул",
+    goodsProperty: [],
+    trademark: "",
+    id: uuidv4(),
+    barcode: "",
+    ok_code: "",
+    images: []
+  }));
 }
 </script>
 
 <template>
-  <div class="flex flex-column gap-2 w-full">
-    <Toolbar class="gap-2">
+  <div class="w-full">
+    <Toolbar>
       <template #center>
         <h3>Откорректируйте список ваших товаров или услуг</h3>
       </template>
@@ -36,7 +64,7 @@ const addAssortment = () => {
       </template>
     </Toolbar>
     <Fieldset v-for="assortment in assortments" :legend="assortment.name" toggleable collapsed>
-      <AssortmentInfo :assortment="assortment" @update="updateAssortmentInfo"/>
+      <AssortmentInfo :assortment="assortment" @update="updateAssortmentInfo" @delete="deleteAssortment"/>
     </Fieldset>
   </div>
 </template>

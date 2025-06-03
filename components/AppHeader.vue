@@ -17,19 +17,13 @@ const organizationCount = () => {
   return organizationList().length;
 }
 
-const organizationName = ref(null as string);
+const organizationName = ref(null as any as string);
 </script>
 
 <template>
-  <Toolbar class="gap-2">
+  <Toolbar>
     <template #start>
       <img @click="$emit('navigateToHome')" src="../public/favicon.ico" alt="t3t"/>
-    </template>
-    <template #center>
-      <IconField>
-        <InputIcon name="seach-icon" class="pi pi-search"/>
-        <InputText name="search" placeholder="Поиск"/>
-      </IconField>
     </template>
     <template #end>
       <Select v-if="organizationCount() > 1" v-model="organizationName" :options="organizationList()"
