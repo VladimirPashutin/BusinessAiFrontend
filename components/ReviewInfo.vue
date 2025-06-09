@@ -4,8 +4,6 @@ import {ApiHttpClient} from "~/utils/clientProvider.ts";
 import {type GeneratedResponse, type Organization, BusinessAiControllerClient,
         CommonDataControllerClient} from "~/utils/apiQueries.ts";
 
-const emits = defineEmits(['reject']);
-
 const props = defineProps<{response: GeneratedResponse, index: number, orgName: string}>();
 const response = toRef(props, 'response');
 
@@ -21,7 +19,7 @@ const approveResponse = async () => {
 const rejectResponse = async () => {
   const client = new BusinessAiControllerClient(new ApiHttpClient());
   await client.rejectResponse({ id: response.value.id, platform: response.value.platform});
-  emits('reject', response, props.index);
+  response.value.state = "REJECTED";
 }
 
 onMounted(() => {
@@ -32,18 +30,18 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-row gap-2">
-    <FloatLabel variant="on">
+    <FloatLabel variant="on" class="basis-1/3">
       <label for="review">Отзыв клиента</label>
-      <Textarea id="review" v-model="response.review" readonly class="w-full h-dvh"/>
+      <Textarea id="review" v-model="response.review" readonly class="size-full"/>
     </FloatLabel>
     <div class="basis-2/3">
       <InputGroup v-if="response.state === 'PROCESSED'" class="flex flex-row-reverse gap-6">
         <Button @click="approveResponse">Опубликовать</Button>
         <Button @click="rejectResponse">Отклонить</Button>
       </InputGroup>
-      <FloatLabel variant="on">
+      <FloatLabel variant="on" class="size-full">
         <label for="response">Ответ для публикации</label>
-        <Textarea id="response" v-model="response.response" class="w-full h-dvh"
+        <Textarea id="response" v-model="response.response" class="w-full"
                   @update:model-value="modified = true" :disabled="response.state !== 'PROCESSED'"/>
       </FloatLabel>
     </div>

@@ -14,9 +14,9 @@ const image = ref();
 
 onMounted(async () => {
   const client = new CommonDataControllerClient(new ApiHttpClient('application/octet-stream'));
-  image.value = URL.createObjectURL(await client.getImage("assortment|" + publication.value.assortmentId +
-                                                              "|" + publication.value.images[0]));
   description.value = (await client.getAssortment(publication.value.assortmentId)).description;
+  const imageBody = await client.getImage(publication.value.images[0]);
+  if(imageBody) { image.value = URL.createObjectURL(imageBody); }
 });
 
 const considered = () => {
@@ -41,7 +41,7 @@ const rejectPublication = () => {
         <img alt="Изображение" :src="image"/>
       </template>
       <template #content>
-        <div v-html="description"/>
+        <div v-html="description" class="size-full"/>
       </template>
     </Card>
     <div class="basis-2/3">
@@ -51,7 +51,7 @@ const rejectPublication = () => {
       </InputGroup>
       <FloatLabel variant="on">
         <label for="request">Сообщение для публикации</label>
-        <Textarea id="request" v-model="publication.note" class="w-full h-dvh"
+        <Textarea id="request" v-model="publication.note" class="size-full"
                   @update:model-value="modified = true" :disabled="considered()"/>
       </FloatLabel>
     </div>

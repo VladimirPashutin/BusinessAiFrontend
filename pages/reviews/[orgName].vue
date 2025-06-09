@@ -5,8 +5,8 @@ import {type Organization, BusinessAiControllerClient} from "~/utils/apiQueries.
 
 const route = useRoute();
 const processLoading = ref(false);
-const organization = ref(null as any as Organization);
 const responses = ref([] as GeneratedResponse[]);
+const organization = ref(null as any as Organization);
 
 onMounted(async () => {
   processLoading.value = true;
@@ -51,7 +51,8 @@ const makeTitle = (response: GeneratedResponse) => {
                       lazy @lazy-load="loadResponses">
       <template v-slot:item="{item, options}">
         <Fieldset :legend="makeTitle(item)" toggleable collapsed>
-          <PublicationInfo :publication="item" :index="options.index" @reject="deleteResponse"/>
+          <ReviewInfo :response="item" :index="options.index" :org-name="organization.strictOrgName"
+                      @reject="deleteResponse"/>
         </Fieldset>
       </template>
     </VirtualScroller>
