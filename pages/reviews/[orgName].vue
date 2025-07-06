@@ -10,9 +10,10 @@ const organization = ref(null as any as Organization);
 
 onMounted(async () => {
   processLoading.value = true;
-  const commonClient = new CommonDataControllerClient(new ApiHttpClient());
-  const businessClient = new BusinessAiControllerClient(new ApiHttpClient());
-  organization.value = await commonClient.getOrganization(<string>route.params.orgName);
+  const runtimeConfig = useRuntimeConfig();
+  const commonClient = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
+  const businessClient = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
+  organization.value = await commonClient.getOrganizationByName(<string>route.params.orgName);
   const responsesCount = await businessClient.getAllResponsesCount();
   responses.value = Array.from({length: responsesCount});
   await loadResponses({ first: 0, last: Math.min(responsesCount, 100)})
@@ -25,8 +26,9 @@ const loadResponses = async (event: { first: number, last: number }) => {
   let offset = first;
   let limit = last - first;
   processLoading.value = true;
+  const runtimeConfig = useRuntimeConfig();
   const _items = [...responses.value] as GeneratedResponse[];
-  const controllerClient = new BusinessAiControllerClient(new ApiHttpClient());
+  const controllerClient = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   const loadedItems = await controllerClient.getAllResponses({ offset: offset, limit: limit});
   _items.splice(offset, limit, ...loadedItems);
   responses.value = _items;
@@ -34,7 +36,8 @@ const loadResponses = async (event: { first: number, last: number }) => {
 };
 
 const deleteResponse = async (response: GeneratedResponse, index: number) => {
-  const client = new BusinessAiControllerClient(new ApiHttpClient());
+  const runtimeConfig = useRuntimeConfig();
+  const client = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   await client.rejectResponse({id: response.id, platform: response.platform});
   responses.value.splice(index, 1);
 }

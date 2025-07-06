@@ -33,7 +33,7 @@ const [loginModel] = defineModel({
       return value;
     }
     const runtimeConfig = useRuntimeConfig();
-    new AuthenticationControllerClient(new ApiHttpClient()).
+    new AuthenticationControllerClient(new ApiHttpClient(runtimeConfig.app.authHost)).
     isLoginExists({
       application: runtimeConfig.app.applicationName,
       login: value
@@ -102,14 +102,13 @@ const doRegistration = (form) => {
     organization: form.organization.value,
     patronymic: form.patronymic.value,
     login: <string>loginModel.value,
-    birthday: form.birthday.value,
     name: form.personName.value,
     surname: form.surname.value,
     email: form.eMail.value,
     phone: form.phone.value,
     authType: "BEARER"
   });
-  new AuthRegistrationControllerClient(new ApiHttpClient()).
+  new AuthRegistrationControllerClient(new ApiHttpClient(runtimeConfig.app.authHost)).
       registration(registrationRequest).then((id) => {
     if (id) {
       showRegistrationInfo.value = true
@@ -124,7 +123,7 @@ const doRestorePassword = () => {
     applicationName: runtimeConfig.app.applicationName,
     login: <string>loginModel.value
   });
-  new AuthRegistrationControllerClient(new ApiHttpClient()).
+  new AuthRegistrationControllerClient(new ApiHttpClient(runtimeConfig.app.authHost)).
       restorePassword(restorePassword).
       then(() => showRestorePassword.value = true).
       catch(() => localError.value = "Непредвиденная ошибка при отправке письма для смены пароля");
@@ -162,7 +161,8 @@ const close = () => {
           <label for="password">Пароль:</label>
         </InputGroupAddon>
         <Password id="password" name="password" type="password" :feedback="false" variant="filled"
-                  :inputProps="{ autocomplete: 'current-password' }" @keyup.enter="passwordClicked($form)"/>
+                  :inputProps="{ autocomplete: 'current-password' }" @keyup.enter="passwordClicked($form)"
+                  @update:model-value="localError = ''"/>
       </InputGroup>
       <div v-if="showRegistrationForm">
         <InputGroup>

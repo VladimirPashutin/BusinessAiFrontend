@@ -5,6 +5,7 @@ import {RefreshRequest} from "~/utils/apiQueries";
 
 export default defineEventHandler(async (event) => {
     const session: UserSession = await getUserSession(event);
+    const runtimeConfig = useRuntimeConfig();
     const tokens = session?.jwt;
     if(tokens === null || tokens === undefined) { return; }
     const accessExpiration = jwtDecode(tokens.accessToken).exp;
@@ -18,7 +19,8 @@ export default defineEventHandler(async (event) => {
             refreshToken: tokens.refreshToken,
             accessToken: tokens.accessToken
         })
-        const data: UserSession["jwt"] = await $fetch("/auth/refresh", { method: "POST", body: JSON.stringify(request) })
+        const data: UserSession["jwt"] = await $fetch(runtimeConfig.authHost + "auth/refresh",
+                                        { method: "POST", body: JSON.stringify(request) });
         if(data === undefined) { await clearUserSession(event); return; }
         if(data.accessToken !== null && data.refreshToken !== null) {
             const jwt = jwtDecode(data.accessToken);
@@ -39,7 +41,7 @@ export default defineEventHandler(async (event) => {
             return;
         }
     } else if(1000 * accessExpiration < Date.now() + 10000) {
-        const accessToken = await $fetch("/auth/token",
+        const accessToken = await $fetch(runtimeConfig.authHost + "auth/token",
             { method: "POST", body: tokens.refreshToken }).catch((e) => {
                 console.warn("Ошибка обновления токена", e);
                 clearUserSession(event);

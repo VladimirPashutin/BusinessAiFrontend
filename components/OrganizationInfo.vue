@@ -1,22 +1,13 @@
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
-import AddressInfo from "~/components/AddressInfo.vue";
-import {CommonDataControllerClient} from "~/utils/apiQueries.ts";
-import {ApiHttpClient, newOrganization} from "~/utils/clientProvider.ts"
+import {toRef} from "vue";
 
-defineEmits(['update']);
-const props = defineProps<{orgName: string}>();
-const organization = ref(newOrganization());
-
-onMounted(() => {
-  const client = new CommonDataControllerClient(new ApiHttpClient());
-  client.getOrganization(props.orgName).then((value) => organization.value = value);
-});
-
+const emits = defineEmits(['update']);
+const props = defineProps<{organization: Organization}>();
+const organization = toRef(props, 'organization');
 </script>
 
 <template>
-  <div>
+  <div class="flex-row">
     <InputGroup>
       <InputGroupAddon>
         <label>Полное наименование организации</label>
@@ -26,41 +17,34 @@ onMounted(() => {
     </InputGroup>
     <InputGroup>
       <InputGroupAddon>
-        <label>ИНН</label>
+        <label for="inn">ИНН</label>
       </InputGroupAddon>
-      <InputText v-model="organization.inn"
+      <InputText v-model="organization.inn" name="inn"
                  @change="$emit('update', organization)"/>
       <InputGroupAddon>
-        <label>ОКФС</label>
+        <label for="ogrn">ОГРН</label>
       </InputGroupAddon>
-      <InputText v-model="organization.okfs"
+      <InputText v-model="organization.ogrn" name="ogrn"
+                 @change="$emit('update', organization)"/>
+      <InputGroupAddon>
+        <label for="okved">ОКВЕД</label>
+      </InputGroupAddon>
+      <InputText v-model="organization.okved" name="okved"
                  @change="$emit('update', organization)"/>
     </InputGroup>
+    <GovernanceInfo :governance="organization.governance" :org-name="organization.strictOrgName"
+                    :org-id="organization.fullOrganizationName" @update="$emit('update', organization)"/>
     <InputGroup>
-      <InputGroupAddon>
-        <label>ОГРН</label>
-      </InputGroupAddon>
-      <InputText v-model="organization.ogrn"
-                 @change="$emit('update', organization)"/>
-      <InputGroupAddon>
-        <label>ОКПО</label>
-      </InputGroupAddon>
-      <InputText v-model="organization.okpo"
-                 @change="$emit('update', organization)"/>
+      <AddressInfo address-type="Юридический адрес" :address="organization.lowAddress" form-name="lowAddress"
+                   @update="$emit('update', organization)"/>
+      <AddressInfo address-type="Почтовый адрес" :address="organization.postAddress" form-name="postAddress"
+                   @update="$emit('update', organization)"/>
     </InputGroup>
-    <InputGroup>
-      <InputGroupAddon>
-        <label>Юридический адрес</label>
-      </InputGroupAddon>
-      <InputText v-model="organization.lowAddress.value"
-                 @change="$emit('update', organization)"/>
-    </InputGroup>
-    <InputGroup>
-      <InputGroupAddon>
-        <label>Почтовый адрес</label>
-      </InputGroupAddon>
-      <InputText v-model="organization.postAddress.value"
-                 @change="$emit('update', organization)"/>
-    </InputGroup>
+    <Fieldset v-for="bankDetails in organization.bankDetails" :legend="bankDetails.name">
+      <BankInfo :bank-details="bankDetails" :org-id="organization.id" @update="$emit('update', organization)"/>
+    </Fieldset>
+    <div v-for="contact in organization.contacts">
+      <ContactInfo :contact="contact" @update="$emit('update', organization)"/>
+    </div>
   </div>
 </template>

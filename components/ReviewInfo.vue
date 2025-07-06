@@ -11,19 +11,22 @@ const modified = ref(false);
 const organization = ref(null as any as Organization);
 
 const approveResponse = async () => {
-  const client = new BusinessAiControllerClient(new ApiHttpClient());
+  const runtimeConfig = useRuntimeConfig();
+  const client = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   await client.approveResponse({ id: response.value.id, platform: response.value.platform});
   response.value.state = "READY";
 }
 
 const rejectResponse = async () => {
-  const client = new BusinessAiControllerClient(new ApiHttpClient());
+  const runtimeConfig = useRuntimeConfig();
+  const client = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   await client.rejectResponse({ id: response.value.id, platform: response.value.platform});
   response.value.state = "REJECTED";
 }
 
 onMounted(() => {
-  const client = new CommonDataControllerClient(new ApiHttpClient());
+  const runtimeConfig = useRuntimeConfig();
+  const client = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   client.getOrganization(props.orgName).then((value) => organization.value = value);
 });
 </script>

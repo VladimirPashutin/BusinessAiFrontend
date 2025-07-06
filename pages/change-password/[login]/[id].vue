@@ -26,12 +26,14 @@ const doChangePassword = async (form) => {
       passwordHash: makeCredentialsFromData(<string>route.params.login, form.password.value),
       id: <string>route.params.id
     });
-    await new AuthRegistrationControllerClient(new ApiHttpClient()).changePassword(data);
+    const runtimeConfig = useRuntimeConfig();
+    await new AuthRegistrationControllerClient(new ApiHttpClient(runtimeConfig.app.authHost)).changePassword(data);
     close();
   }
 }
 const close = () => {
   dialogVisible.value = false;
+  navigateTo('/');
 }
 </script>
 

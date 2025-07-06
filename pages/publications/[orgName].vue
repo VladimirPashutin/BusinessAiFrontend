@@ -11,9 +11,10 @@ const publications = ref([] as PublicationsResponse[]);
 
 onMounted(async () => {
   processLoading.value = true;
-  const commonClient = new CommonDataControllerClient(new ApiHttpClient());
-  const businessClient = new BusinessAiControllerClient(new ApiHttpClient());
-  organization.value = await commonClient.getOrganization(<string>route.params.orgName);
+  const runtimeConfig = useRuntimeConfig();
+  const commonClient = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
+  const businessClient = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
+  organization.value = await commonClient.getOrganizationByName(<string>route.params.orgName);
   publicationsCount.value = await businessClient.getAllPublicationsCount();
   publications.value = Array.from({length: publicationsCount.value});
   await loadPublications({ first: 0, last: Math.min(publicationsCount.value, 100)})
@@ -27,8 +28,9 @@ const loadPublications = async (event: { first: number, last: number }) => {
   if(Number.isNaN(first)) { offset = 0; }
   if(Number.isNaN(first) || Number.isNaN(last))
   { limit = publicationsCount.value; }
+  const runtimeConfig = useRuntimeConfig();
   const _items = [...publications.value] as PublicationsResponse[];
-  const controllerClient = new BusinessAiControllerClient(new ApiHttpClient());
+  const controllerClient = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   const loadedItems = await controllerClient.getAllPublications({ offset: offset, limit: limit});
   _items.splice(offset, limit, ...loadedItems);
   publications.value = _items;
@@ -36,7 +38,8 @@ const loadPublications = async (event: { first: number, last: number }) => {
 };
 
 const deletePublication = async (publication: PublicationsResponse, index: number) => {
-  const client = new BusinessAiControllerClient(new ApiHttpClient());
+  const runtimeConfig = useRuntimeConfig();
+  const client = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   await client.rejectPublication(publication.id);
   publications.value.splice(index, 1);
 }

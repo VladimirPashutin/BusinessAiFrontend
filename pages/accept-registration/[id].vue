@@ -14,10 +14,12 @@ const formHeader = () => {
 
 const close = () => {
   dialogVisible.value = false;
+  navigateTo('/');
 }
 
 onMounted( async () => {
-  registrationAccepted.value = await new AuthRegistrationControllerClient(new ApiHttpClient()).
+  const runtimeConfig = useRuntimeConfig()
+  registrationAccepted.value = await new AuthRegistrationControllerClient(new ApiHttpClient(runtimeConfig.app.authHost)).
                                acceptRegistration(route.params.id);
 })
 </script>

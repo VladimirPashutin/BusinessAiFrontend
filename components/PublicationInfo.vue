@@ -13,7 +13,8 @@ const description = ref();
 const image = ref();
 
 onMounted(async () => {
-  const client = new CommonDataControllerClient(new ApiHttpClient('application/octet-stream'));
+  const runtimeConfig = useRuntimeConfig();
+  const client = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost,'application/octet-stream'));
   description.value = (await client.getAssortment(publication.value.assortmentId)).description;
   const imageBody = await client.getImage(publication.value.images[0]);
   if(imageBody) { image.value = URL.createObjectURL(imageBody); }
@@ -24,7 +25,8 @@ const considered = () => {
 }
 
 const approvePublication = async () => {
-  const client = new BusinessAiControllerClient(new ApiHttpClient());
+  const runtimeConfig = useRuntimeConfig();
+  const client = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   await client.approvePublication(publication.value.id);
   publication.value.readyState = "READY";
 }

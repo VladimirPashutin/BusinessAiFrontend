@@ -6,7 +6,7 @@ export default defineNuxtConfig({
 
     css: ['primeicons/primeicons.css'],
 
-    devServer: { host: 'localhost',
+    devServer: { host: 'localhost', port: 3000,
       cors: { origin: "*", methods: "*", allowHeaders: "*" }
     },
 
@@ -215,33 +215,12 @@ export default defineNuxtConfig({
         }
     },
 
-    routeRules: {
-        '/': {prerender: true},
-        'ai/**': { proxy: {
-                to: "http://localhost:8448/ai/**"
-            }
-        },
-        'auth/**': { proxy: {
-                to: "http://localhost:8118/auth/**"
-            }
-        },
-        'auth-admin/**': { proxy: {
-                to: "http://localhost:8118/auth-admin/**"
-            }
-        },
-        'auth-registration/**': { proxy: {
-                to: "http://localhost:8118/auth-registration/**"
-            }
-        },
-        'business-common/**': { proxy: {
-                to: "http://localhost:8448/business-common/**"
-            }
-        }
-    },
-
     runtimeConfig: {
+        authHost: 'http://auth-service:8080/',
         app: {
-            applicationName: 'business-ai'
+            applicationName: 'business-ai',
+            businessHost: '/',
+            authHost: '/'
         }
     },
 

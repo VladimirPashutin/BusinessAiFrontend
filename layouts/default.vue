@@ -13,7 +13,8 @@ const selectOrganization = (name: string) => {
 const getOrgName = (): string => {
   if(selectedOrganization.value === null) {
     const {user} = useUserSession();
-    return user.value.communities[0];
+    if(user.value?.communities === undefined || user.value?.communities.length === 0)
+    { return "Организация не указана"} else { return user.value.communities[0]; }
   } else { return selectedOrganization.value; }
 }
 
@@ -32,6 +33,13 @@ const mainMenuItems = ref([
     icon: 'pi pi-building-columns',
     command: async ()  => {
       navigateTo('/organization/' + getOrgName())
+    }
+  },
+  {
+    label: 'Лицевой счёт',
+    icon: 'pi pi-money-bill',
+    command: async ()  => {
+      navigateTo('/account/' + getOrgName())
     }
   },
   {

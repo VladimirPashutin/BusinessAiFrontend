@@ -1,94 +1,83 @@
 <script setup lang="ts">
-import {toRef,onMounted} from "vue";
+import {ref, toRef} from "vue";
 import type {Assortment} from "~/utils/apiQueries.ts";
 import type {EditorTextChangeEvent} from "primevue/editor";
 import type {FileUploadSelectEvent} from "primevue/fileupload";
 import {CommonDataControllerClient} from "~/utils/apiQueries.ts";
 import {ApiHttpClient, FileUploadClient} from "~/utils/clientProvider.ts";
 
-const emits = defineEmits(['update','delete']);
+export type AssortmentData = [Assortment, Array<string | ArrayBuffer>];
 
-const images = ref([]);
+const props = defineProps<{orgId: string, assortment: AssortmentData}>();
+const emits = defineEmits(['delete']);
+
+const assortmentData = toRef(props, 'assortment');
+const orgId = toRef(props, 'orgId');
+
 const selectedImage = ref(null as number | null);
 
-const props = defineProps<{assortment: Assortment | null}>();
-const assortmentInfo = toRef(props, 'assortment');
+let unsavedImages = new Map<string, any>();
+
+let imagesForDelete = [] as Array<string>;
 
 const modified = ref(false);
 
-let assortment: Assortment = assortmentInfo.value === null ? {
-  description: "Описание ассортиментной позиции",
-  measurement: "Единица измерения",
-  name: "Наименование",
-  article: "Артикул",
-  goodsProperty: [],
-  trademark: "",
-  barcode: "",
-  ok_code: "",
-  images: [],
-  id: ""
-} : assortmentInfo.value;
-
-onMounted(async () => {
-  let forRemove = [];
-  if(assortment.images.length == 0) { return; }
-  const delClient = new CommonDataControllerClient(new ApiHttpClient());
-  const getClient = new CommonDataControllerClient(new ApiHttpClient("image/"));
-  for(const i in assortment.images) {
-    const response = await getClient.getImage("assortment|" + assortment.id + "|" + assortment.images[i]);
-    if(response.size > 0) {
-      const reader = new FileReader();
-      reader.readAsDataURL(response);
-      reader.onloadend = function () {
-        images.value[i] = reader.result;
-      }
-    } else { forRemove.push(i);
-      await delClient.deleteAssortmentImage(assortment.id, assortment.images[i]);
-    }
-  }
-  for(const i in forRemove) {
-    assortment.images.splice(forRemove[i], 1);
-  }
-})
+const images = computed({
+  get: () => assortmentData.value[1],
+  set: (newImages) => { assortmentData.value[1] = newImages; }
+});
 
 const descriptionChanged =(event: EditorTextChangeEvent) => {
-  assortment.description = event.htmlValue;
+  assortmentData.value[0].description = event.htmlValue;
   modified.value = true;
 }
 
-const saveModifications = () => {
-  emits('update', assortment);
+const saveModifications = async () => {
+  const runtimeConfig = useRuntimeConfig();
+  const saveClient = new CommonDataControllerClient(new FileUploadClient(runtimeConfig.app.businessHost));
+  const client = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
+  await client.saveAssortment(orgId.value, assortmentData.value[0]);
+  for(let name of imagesForDelete)
+  { await client.deleteAssortmentImage(assortmentData.value[0].id, name); }
+  for(let entry of unsavedImages) {
+    await saveClient.saveAssortmentImage(assortmentData.value[0].id, entry[0],
+         { orgId: orgId.value, file: entry[1]});
+  }
   modified.value = false;
+  unsavedImages.clear();
+  imagesForDelete = [];
 }
 
-const selectImage = (value) => {
+const selectImage = (value: number) => {
   selectedImage.value = value;
 }
 
-const onLoadNewImage = async (event: FileUploadSelectEvent) => {
+const onLoadNewImage = (event: FileUploadSelectEvent) => {
   let imageIndex;
   const extension = event.files[0].name.split('.').pop();
   const imageName = event.files[0].name.replace("." + extension, "");
-  const client = new CommonDataControllerClient(new FileUploadClient());
-  if(assortment.images.includes(imageName)) {
-    imageIndex = assortment.images.indexOf(imageName);
-  } else { assortment.images.push(imageName);
-    imageIndex = images.value.length;
-  }
+  if(assortmentData.value[0].images.includes(imageName)) {
+    imageIndex = assortmentData.value[0].images.indexOf(imageName);
+  } else { imageIndex = assortmentData.value[0].images.push(imageName) - 1; }
   const reader = new FileReader();
-  reader.onloadend = async () => {
-    images.value[imageIndex] = reader.result;
+  reader.onloadend = () => {
+    if(reader.result !== null) {
+      assortmentData.value[1][imageIndex] = reader.result;
+      unsavedImages.set(imageName, event.files[0]);
+      images.value = assortmentData.value[1];
+    }
   }
   reader.readAsDataURL(event.files[0]);
-  await client.saveAssortmentImage(assortment.id, imageName, { file: event.files[0]});
+  modified.value = true;
 }
 
-const deleteSelectedImage = async () => {
+const deleteSelectedImage = () => {
   if(selectedImage.value === null) { return; }
-  const client = new CommonDataControllerClient(new ApiHttpClient());
-  await client.deleteAssortmentImage(assortment.id, assortment.images[selectedImage.value]);
-  assortment.images.splice(selectedImage.value, 1);
-  images.value.splice(selectedImage.value, 1);
+  imagesForDelete.push(assortmentData.value[0].images[selectedImage.value]);
+  assortmentData.value[0].images.splice(selectedImage.value, 1);
+  assortmentData.value[1].splice(selectedImage.value, 1);
+  images.value = assortmentData.value[1];
+  modified.value = true;
 }
 </script>
 
@@ -97,14 +86,15 @@ const deleteSelectedImage = async () => {
     <InputGroup class="gap-2">
       <InputGroupAddon class="gap-2">
         <label for="name">Наименование</label>
-        <InputText id="name" v-model.trim="assortment.name" autofocus
-                  :invalid="!assortment.name" fluid @change="modified = true" />
+        <InputText id="name" v-model.trim="assortmentData[0].name" autofocus placeholder="Введите наименование"
+                  :invalid="!assortmentData[0].name" fluid @change="modified = true" />
       </InputGroupAddon>
       <InputGroupAddon class="gap-2">
         <label for="article">Артикул</label>
-        <InputText id="article" v-model.trim="assortment.article" fluid @change="modified = true" />
+        <InputText id="article" v-model.trim="assortmentData[0].article" fluid @change="modified = true"
+                   placeholder="Введите артикул"/>
       </InputGroupAddon>
-      <Button @click="$emit('delete', assortment)">Удалить</Button>
+      <Button severity="warn" @click="$emit('delete', assortmentData[0])">Удалить</Button>
       <Button v-if="modified" @click="saveModifications">Сохранить изменения</Button>
     </InputGroup>
     <InputGroup class="flex flex-row gap-2">
@@ -121,7 +111,7 @@ const deleteSelectedImage = async () => {
                     <img :src="slotProps.data" alt="Фото продукта"/>
                   </template>
                   <template #preview="imageProps">
-                    <img :src="slotProps.data" alt="Фото продукта" :style="imageProps.style" @click="imageProps.onClick"/>
+                    <img :src="slotProps.data" alt="Фото продукта" :style="imageProps.style"/>
                   </template>
                 </Image>
               </div>
@@ -129,11 +119,13 @@ const deleteSelectedImage = async () => {
           </template>
         </Carousel>
         <InputGroup class="gap-6">
-          <FileUpload id="loadNewImage" mode="basic" @select="onLoadNewImage" customUpload auto/>
-          <Button @click="deleteSelectedImage" class="pi pi-minus"> Удалить</Button>
+          <FileUpload id="loadNewImage" mode="basic" @select="onLoadNewImage"
+                      customUpload auto accept="image/*" :maxFileSize="10000000"/>
+          <Button severity="warn" @click="deleteSelectedImage" class="pi pi-minus"> Удалить</Button>
         </InputGroup>
       </div>
-      <Editor class="basis-2/3" id="description" v-model="assortment.description" @text-change="descriptionChanged" />
+      <Editor class="basis-2/3" id="description" v-model="assortmentData[0].description"
+              placeholder="Введите описание" @text-change="descriptionChanged" />
     </InputGroup>
   </div>
 </template>

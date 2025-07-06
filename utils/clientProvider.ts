@@ -1,9 +1,9 @@
 import {jwtDecode} from "jwt-decode";
-import type { HttpClient, AddressObject, Department, Governance,
-              Organization, OrganizationRef, RestResponse
+import { type HttpClient, type AddressObject, type Department, type Governance,
+         type Organization, type OrganizationRef, type RestResponse, BankingDetails
 } from "./apiQueries.ts";
 
-const refreshTokens = async () => {
+export const refreshTokens = async () => {
     const {loggedIn, session} = useUserSession();
     if (loggedIn.value) {
         const accessToken = session.value.jwt?.accessToken as string;
@@ -18,16 +18,18 @@ const refreshTokens = async () => {
 
 export class ApiHttpClient implements HttpClient {
     contentType: string;
+    host: string;
 
-    constructor(contentType = "application/json") {
+    constructor(host: string, contentType = "application/json") {
         this.contentType = contentType;
+        this.host = host;
     }
 
     async request<R>(requestConfig: {
         method: string; url: string; queryParams?: any;
         data?: any; copyFn?: (data: R) => R;
     }): RestResponse<R> {
-        let url = "/" + requestConfig.url;
+        let url = this.host + requestConfig.url;
         if (requestConfig.queryParams !== null && requestConfig.queryParams !== undefined) {
             url = url + "?" + new URLSearchParams(requestConfig.queryParams).toString();
         }
@@ -55,21 +57,25 @@ export class ApiHttpClient implements HttpClient {
 }
 
 export class FileUploadClient implements HttpClient {
+    host: string;
+
+    constructor(host: string) { this.host = host; }
 
     async request<R>(requestConfig: {method: string; url: string; queryParams?: any;
                                      data?: any; copyFn?: (data: R) => R }): RestResponse<R> {
         if(requestConfig.queryParams === null) { return new Promise<R>(() => {}); }
+        let url = this.host + requestConfig.url;
         const token = await refreshTokens();
         const keys = Object.keys(requestConfig.queryParams);
         const data = new FormData();
         keys.forEach(key => { data.append(key, requestConfig.queryParams[key])})
-        if (requestConfig.url.startsWith('http')) {
+        if (url.startsWith('http')) {
             if (token === null) {
                 //@ts-ignore
-                return $fetch("", { baseURL: requestConfig.url, method: requestConfig.method, body: data});
+                return $fetch("", { baseURL: url, method: requestConfig.method, body: data});
             } else {
                 //@ts-ignore
-                return $fetch("", { baseURL: requestConfig.url, method: requestConfig.method, headers: {
+                return $fetch("", { baseURL: url, method: requestConfig.method, headers: {
                         "Authorization": token
                     }, body: data
                 });
@@ -77,10 +83,10 @@ export class FileUploadClient implements HttpClient {
         } else {
             if (token === null) {
                 //@ts-ignore
-                return $fetch("/" + requestConfig.url, { method: requestConfig.method, body: data});
+                return $fetch(url, { method: requestConfig.method, body: data});
             } else {
                 //@ts-ignore
-                return $fetch("/" + requestConfig.url, { method: requestConfig.method, headers: {
+                return $fetch(url, { method: requestConfig.method, headers: {
                         "Authorization": token
                     }, body: data
                 });
@@ -90,47 +96,51 @@ export class FileUploadClient implements HttpClient {
 
 }
 
-const postAddress = (): AddressObject => {
+export const newAddress = (): AddressObject => {
     return {
-        value: "Адрес не указан",
+        value: "",
         id: ""
     }
 };
-const lowAddress = (): AddressObject => {
-    return {
-        value: "Адрес не указан",
-        id: ""
-    }
-};
+
 // const strategies = (): AiStrategy[] => { return [] as AiStrategy[] };
 // const contacts = (): ContactInfo[] => { return [] as ContactInfo[] };
-const departments = (): Department[] => { return [] as Department[] };
-const orgRef = (): OrganizationRef => {
-    return {
-        value: "Организация не указана",
-        id: ""
-    }
-};
-const governance = (): Governance => {
+export const departments = (): Department[] => { return [] as Department[] };
+export const governance = (): Governance => {
     return {
         kind: "Директор" as GoverningKind,
+        organization: null as unknown as OrganizationRef,
         start: Date.now() as unknown as Date,
         end: Date.now() as unknown as Date,
-        director: [] as string[],
-        organization: orgRef()
+        director: [] as string[]
     }
 };
+
+export const newBankInfo = (owner: string): BankingDetails => {
+    return {
+        ownerId: owner,
+        correspond: "",
+        bankName: "",
+        account: "",
+        name: "",
+        bik: "",
+        inn: "",
+        kpp: ""
+    }
+}
 
 export const newOrganization = (): Organization => {
     return {
         fullOrganizationName: "Организация не указана",
         strictOrgName: "Организация не указана",
-        postAddress: postAddress(),
         department: departments(),
+        postAddress: newAddress(),
+        lowAddress: newAddress(),
         governance: governance(),
-        lowAddress: lowAddress(),
+        bankDetails: [],
+        contacts: [],
         okato: "",
-        okonh: "",
+        okved: "",
         okopf: "",
         okpo: "",
         ogrn: "",

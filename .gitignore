@@ -46,6 +46,7 @@ stats.html
 **/node
 **/.tmp
 **/dist
+.npmrc
 /.jpb
 *.suo
 *.sln
