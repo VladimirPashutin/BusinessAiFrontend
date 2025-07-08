@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import {v4 as uuidv4} from "uuid";
 import {ref, onMounted} from "vue";
-import {ApiHttpClient, newOrganization} from "~/utils/clientProvider.ts";
+import {ApiHttpClient, newBankDetails, newOrganization} from "~/utils/clientProvider.ts";
 import {type Organization, CommonDataControllerClient} from "~/utils/apiQueries.ts";
 
 const route = useRoute();
@@ -25,31 +24,18 @@ onMounted(() => {
   const runtimeConfig = useRuntimeConfig();
   const client = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   client.getOrganizationByName(<string>route.params.orgName).then((value) => {
-    if(value !== null && value !== undefined) {
-      organization.value = value;
-    } else { organization.value.fullOrganizationName = <string>route.params.orgName;
+    if(value !== null && value !== undefined) { organization.value = value; }
+    else { organization.value = newOrganization();
+      organization.value.fullOrganizationName = <string>route.params.orgName;
       organization.value.strictOrgName = <string>route.params.orgName;
-      organization.value.id = uuidv4();
     }
-    if(organization.value.bankDetails === null || organization.value.bankDetails.length === 0) {
-      organization.value.bankDetails = [new BankingDetails({
-        name: "Основной расчётный счёт",
-        ownerId: organization.value.id,
-        correspond: "",
-        bankName: "",
-        account: "",
-        kpp: "",
-        inn: "",
-        bik: ""
-      })]
-      needUpdate.value = true;
-    }
+    if(organization.value.bankDetails === null || organization.value.bankDetails.length === 0)
+    { organization.value.bankDetails = newBankDetails(organization.value.id, "Основной расчётный счёт"); }
     if(organization.value.contacts === null || organization.value.contacts.length === 0) {
       organization.value.contacts = [new ContactInfo({
         kind: "email",
         value: ""
       })]
-      needUpdate.value = true;
     }
   });
 });

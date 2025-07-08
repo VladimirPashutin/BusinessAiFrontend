@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import {toRef,onMounted} from "vue";
+import {toRef} from "vue";
 import {ApiHttpClient} from "~/utils/clientProvider.ts";
-import {type GeneratedResponse, type Organization, BusinessAiControllerClient,
-        CommonDataControllerClient} from "~/utils/apiQueries.ts";
+import {type GeneratedResponse, BusinessAiControllerClient} from "~/utils/apiQueries.ts";
 
-const props = defineProps<{response: GeneratedResponse, index: number, orgName: string}>();
+const props = defineProps<{response: GeneratedResponse, index: number}>();
 const response = toRef(props, 'response');
-
 const modified = ref(false);
-const organization = ref(null as any as Organization);
 
 const approveResponse = async () => {
   const runtimeConfig = useRuntimeConfig();
@@ -23,12 +20,6 @@ const rejectResponse = async () => {
   await client.rejectResponse({ id: response.value.id, platform: response.value.platform});
   response.value.state = "REJECTED";
 }
-
-onMounted(() => {
-  const runtimeConfig = useRuntimeConfig();
-  const client = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  client.getOrganization(props.orgName).then((value) => organization.value = value);
-});
 </script>
 
 <template>

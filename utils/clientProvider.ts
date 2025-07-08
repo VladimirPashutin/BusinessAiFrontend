@@ -1,3 +1,4 @@
+import {v4 as uuidv4} from "uuid";
 import {jwtDecode} from "jwt-decode";
 import { type HttpClient, type AddressObject, type Department, type Governance,
          type Organization, type OrganizationRef, type RestResponse, BankingDetails
@@ -112,20 +113,31 @@ export const governance = (): Governance => {
         organization: null as unknown as OrganizationRef,
         start: Date.now() as unknown as Date,
         end: Date.now() as unknown as Date,
-        director: [] as string[]
+        directorIdList: [] as string[]
     }
 };
 
-export const newBankInfo = (owner: string): BankingDetails => {
-    return {
-        ownerId: owner,
+export const newBankInfo = (ownerId: string, accountName: string): BankingDetails => {
+    return { ownerId: ownerId,
+        name: accountName,
         correspond: "",
         bankName: "",
         account: "",
-        name: "",
         bik: "",
         inn: "",
         kpp: ""
+    }
+}
+
+export const newBankDetails = (ownerId: string, accountName: string) => {
+    let result = [];
+    result.push(newBankInfo(ownerId, accountName));
+    return result;
+}
+
+export const newContact = (contactKind: string): ContactInfo => {
+    return { kind: contactKind,
+        value: ""
     }
 }
 
@@ -139,13 +151,13 @@ export const newOrganization = (): Organization => {
         governance: governance(),
         bankDetails: [],
         contacts: [],
+        id: uuidv4(),
         okato: "",
         okved: "",
         okopf: "",
         okpo: "",
         ogrn: "",
         okfs: "",
-        inn: "",
-        id: ""
+        inn: ""
     }
 }

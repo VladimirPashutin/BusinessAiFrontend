@@ -8,7 +8,7 @@ const contact = toRef(props, 'contact');
 </script>
 
 <template>
-  <InputGroup class="flex flex-row gap-2">
+  <InputGroup class="gap-2">
     <InputGroupAddon>
       <label for="contactKind">Контактные данные</label>
     </InputGroupAddon>

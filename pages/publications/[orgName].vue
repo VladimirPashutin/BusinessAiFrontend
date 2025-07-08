@@ -4,10 +4,12 @@ import {ApiHttpClient} from "~/utils/clientProvider.ts";
 import {type Organization, BusinessAiControllerClient} from "~/utils/apiQueries.ts";
 
 const route = useRoute();
-const publicationsCount = ref(100);
 const processLoading = ref(false);
+const publicationsCount = ref(100);
 const organization = ref(null as any as Organization);
 const publications = ref([] as PublicationsResponse[]);
+const canRequestPublication = ref(false);
+const requestTimeout = 30000;
 
 onMounted(async () => {
   processLoading.value = true;
@@ -43,10 +45,26 @@ const deletePublication = async (publication: PublicationsResponse, index: numbe
   await client.rejectPublication(publication.id);
   publications.value.splice(index, 1);
 }
+
+const requestPublication = () => {
+  canRequestPublication.value = true;
+  const runtimeConfig = useRuntimeConfig();
+  const client = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
+  setTimeout(() => { canRequestPublication.value = false; reloadNuxtApp(); }, requestTimeout);
+  client.requestPublication(organization.value.id);
+}
 </script>
 
 <template>
   <div class="w-full">
+    <Toolbar>
+      <template #center>
+        <h3>Список ваших публикаций</h3>
+      </template>
+      <template #end>
+        <Button :disabled="canRequestPublication" @click="requestPublication">Подготовить публикацию</Button>
+      </template>
+    </Toolbar>
     <VirtualScroller :items="publications" :itemSize="50" :loading="processLoading" show-loader
                       lazy @lazy-load="loadPublications">
       <template v-slot:item="{item, options}">

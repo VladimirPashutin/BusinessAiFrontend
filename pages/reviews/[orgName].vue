@@ -50,6 +50,11 @@ const makeTitle = (response: GeneratedResponse) => {
 
 <template>
   <div class="w-full">
+    <Toolbar>
+      <template #center>
+        <h3>Список отзывов от ваших пользователей</h3>
+      </template>
+    </Toolbar>
     <VirtualScroller :items="responses" :itemSize="50" :loading="processLoading" show-loader
                       lazy @lazy-load="loadResponses">
       <template v-slot:item="{item, options}">

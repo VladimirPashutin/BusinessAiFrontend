@@ -51,9 +51,9 @@ const rejectPublication = () => {
         <Button @click="approvePublication">Опубликовать</Button>
         <Button @click="rejectPublication">Отклонить</Button>
       </InputGroup>
-      <FloatLabel variant="on">
+      <FloatLabel variant="on" class="w-full">
         <label for="request">Сообщение для публикации</label>
-        <Textarea id="request" v-model="publication.note" class="size-full"
+        <Textarea id="request" v-model="publication.note" class="w-full" style="min-height: 300px"
                   @update:model-value="modified = true" :disabled="considered()"/>
       </FloatLabel>
     </div>

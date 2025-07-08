@@ -27,13 +27,13 @@ const organization = toRef(props, 'organization');
       <InputText v-model="organization.ogrn" name="ogrn"
                  @change="$emit('update', organization)"/>
       <InputGroupAddon>
-        <label for="okved">ОКВЕД</label>
+        <label for="okved">ОКВЭД</label>
       </InputGroupAddon>
       <InputText v-model="organization.okved" name="okved"
                  @change="$emit('update', organization)"/>
     </InputGroup>
     <GovernanceInfo :governance="organization.governance" :org-name="organization.strictOrgName"
-                    :org-id="organization.fullOrganizationName" @update="$emit('update', organization)"/>
+                    :org-id="organization.id" @update="$emit('update', organization)"/>
     <InputGroup>
       <AddressInfo address-type="Юридический адрес" :address="organization.lowAddress" form-name="lowAddress"
                    @update="$emit('update', organization)"/>
