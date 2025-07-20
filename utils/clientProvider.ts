@@ -1,21 +1,7 @@
 import {v4 as uuidv4} from "uuid";
-import {jwtDecode} from "jwt-decode";
 import { type HttpClient, type AddressObject, type Department, type Governance,
          type Organization, type OrganizationRef, type RestResponse, BankingDetails
 } from "./apiQueries.ts";
-
-export const refreshTokens = async () => {
-    const {loggedIn, session} = useUserSession();
-    if (loggedIn.value) {
-        const accessToken = session.value.jwt?.accessToken as string;
-        const accessExpiration = jwtDecode(accessToken).exp as number;
-        if (1000 * accessExpiration < Date.now() + 10000) {
-            await $fetch('/api/refresh', {method: 'POST'});
-        }
-        return accessToken;
-    }
-    return null;
-}
 
 export class ApiHttpClient implements HttpClient {
     contentType: string;
@@ -38,8 +24,8 @@ export class ApiHttpClient implements HttpClient {
         if (this.contentType === "application/json") {
             bodyData = JSON.stringify(requestConfig.data);
         }
-        const token = await refreshTokens();
-        if(token === null) {
+        const token = await $fetch("/api/refresh", {"method": "POST"});
+        if(token === null || token === undefined) {
             //@ts-ignore
             return $fetch(url, { method: requestConfig.method, headers: {
                     "content-type": this.contentType
@@ -66,12 +52,12 @@ export class FileUploadClient implements HttpClient {
                                      data?: any; copyFn?: (data: R) => R }): RestResponse<R> {
         if(requestConfig.queryParams === null) { return new Promise<R>(() => {}); }
         let url = this.host + requestConfig.url;
-        const token = await refreshTokens();
+        const token = await $fetch("/api/refresh", {"method": "POST"});
         const keys = Object.keys(requestConfig.queryParams);
         const data = new FormData();
         keys.forEach(key => { data.append(key, requestConfig.queryParams[key])})
         if (url.startsWith('http')) {
-            if (token === null) {
+            if (token === null || token === undefined) {
                 //@ts-ignore
                 return $fetch("", { baseURL: url, method: requestConfig.method, body: data});
             } else {
@@ -82,7 +68,7 @@ export class FileUploadClient implements HttpClient {
                 });
             }
         } else {
-            if (token === null) {
+            if (token === null || token === undefined) {
                 //@ts-ignore
                 return $fetch(url, { method: requestConfig.method, body: data});
             } else {
@@ -161,3 +147,11 @@ export const newOrganization = (): Organization => {
         inn: ""
     }
 }
+
+export function truncate(str: string, maxlength: number) {
+    if (str.length > maxlength) {
+        return str.slice(0, maxlength - 1) + "…";
+    }
+    return str;
+}
+

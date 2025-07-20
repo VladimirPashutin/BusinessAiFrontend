@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {toRef,onMounted} from "vue";
-import {ApiHttpClient} from "~/utils/clientProvider.ts";
+import {ApiHttpClient, truncate} from "~/utils/clientProvider.ts";
 import {CommonDataControllerClient, BusinessAiControllerClient} from "~/utils/apiQueries.ts";
 
 const emits = defineEmits(['reject']);
@@ -15,7 +15,7 @@ const image = ref();
 onMounted(async () => {
   const runtimeConfig = useRuntimeConfig();
   const client = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost,'application/octet-stream'));
-  description.value = (await client.getAssortment(publication.value.assortmentId)).description;
+  description.value = truncate((await client.getAssortment(publication.value.assortmentId)).description, 200);
   const imageBody = await client.getImage(publication.value.images[0]);
   if(imageBody) { image.value = URL.createObjectURL(imageBody); }
 });
@@ -42,9 +42,11 @@ const rejectPublication = () => {
       <template #title>
         <img alt="Изображение" :src="image"/>
       </template>
-      <template #content>
-        <div v-html="description" class="size-full"/>
-      </template>
+<!--      <template #content>-->
+<!--        <div class="w-10">-->
+<!--          <div v-html="description"/>-->
+<!--        </div>-->
+<!--      </template>-->
     </Card>
     <div class="basis-2/3">
       <InputGroup v-if="!considered()" class="flex flex-row-reverse gap-6">
