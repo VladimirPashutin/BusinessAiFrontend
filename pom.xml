@@ -53,6 +53,7 @@
                         <class>ru.pashutin.auth.controller.AuthRegistrationController</class>
                         <class>ru.pashutin.auth.controller.AuthAdministrationController</class>
                         <class>ru.pashutin.business_ai.controller.BusinessAiController</class>
+                        <class>ru.pashutin.business_ai.controller.BusinessCommonController</class>
                         <class>ru.pashutin.business_ai.controller.CommonDataController</class>
                     </classes>
                     <excludeClasses>
