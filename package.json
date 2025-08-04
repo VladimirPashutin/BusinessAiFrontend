@@ -1,0 +1,35 @@
+{
+  "name": "business-ai",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@primevue/forms": "^4.3.4",
+    "@primevue/icons": "^4.3.2",
+    "@primevue/themes": "^4.3.2",
+    "handlebars": "^4.7.8",
+    "js-base64": "^3.7.7",
+    "jwt-decode": "^4.0.0",
+    "nuxt": "3.16.0",
+    "nuxt-auth-utils": "^0.5.16",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.3.1",
+    "quill": "^2.0.3",
+    "ts-md5": "^1.3.1",
+    "uuid": "^11.1.0",
+    "vue": "latest",
+    "vue-router": "latest"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^6.14.0",
+    "@primevue/nuxt-module": "^4.3.1",
+    "@types/node": "^24.0.7",
+    "vue-tsc": "^2.1.10"
+  }
+}

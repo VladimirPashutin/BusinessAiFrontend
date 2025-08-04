@@ -10,12 +10,12 @@
         <groupId>ru.pashutin</groupId>
         <version>1.5.1</version>
     </parent>
-    <artifactId>business-ai-site</artifactId>
+    <artifactId>business-ai-frontend</artifactId>
     <packaging>pom</packaging>
 
-    <name>BusinessAiSite</name>
+    <name>BusinessAiFrontend</name>
 
-    <description>Main landing site for business AI.</description>
+    <description>Frontend for main business AI server.</description>
 
     <dependencyManagement>
         <dependencies>
@@ -29,8 +29,41 @@
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>ru.pashutin</groupId>
+            <artifactId>auth-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ru.pashutin</groupId>
+            <artifactId>business-ai-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
+            <plugin>
+                <groupId>cz.habarta.typescript-generator</groupId>
+                <artifactId>typescript-generator-maven-plugin</artifactId>
+                <configuration>
+                    <classes>
+                        <class>ru.pashutin.auth.controller.AuthenticationController</class>
+                        <class>ru.pashutin.auth.controller.AuthRegistrationController</class>
+                        <class>ru.pashutin.auth.controller.AuthAdministrationController</class>
+                        <class>ru.pashutin.business_ai.controller.BusinessAiController</class>
+                        <class>ru.pashutin.business_ai.controller.CommonDataController</class>
+                    </classes>
+                    <excludeClasses>
+                        <excludeClass>org.springframework.core.io.Resource</excludeClass>
+                        <excludeClass>org.springframework.web.multipart.MultipartFile</excludeClass>
+                    </excludeClasses>
+                    <jsonLibrary>jaxb</jsonLibrary>
+                    <outputKind>module</outputKind>
+                    <outputFile>${project.basedir}/utils/apiQueries.ts</outputFile>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -54,30 +87,88 @@
                             </resources>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <executions>
                     <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
+                        <id>copy-npmrc</id>
                         <phase>generate-resources</phase>
-                    </execution>
-                    <execution>
-                        <id>npm install</id>
                         <goals>
-                            <goal>npm</goal>
+                            <goal>copy-resources</goal>
                         </goals>
-                        <phase>generate-resources</phase>
                         <configuration>
-                            <arguments>install</arguments>
+                            <outputDirectory>${project.basedir}/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/../../../../</directory>
+                                    <includes>
+                                        <include>.npmrc</include>
+                                    </includes>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>install</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>${docker.maven.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>build-docker-image</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>push-docker-image</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>docker.pashutin.com/%a</name>
+                            <build>
+                                <tags>
+                                    <tag>latest</tag>
+                                    <tag>${project.version}</tag>
+                                </tags>
+                                <dockerFile>${project.basedir}/../../Docker/NodeApplication/DockerFile</dockerFile>
+                                <contextDir>${project.basedir}/</contextDir>
+                            </build>
+                        </image>
+                    </images>
+                    <verbose>true</verbose>
+                </configuration>
             </plugin>
         </plugins>
     </build>
