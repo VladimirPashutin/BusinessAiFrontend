@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import {ApiHttpClient} from "~/utils/clientProvider.ts";
-import {type Organization, BusinessAiControllerClient} from "~/utils/apiQueries.ts";
+import {type Organization, BusinessAiControllerClient, BusinessCommonControllerClient} from "~/utils/apiQueries.ts";
 
 const route = useRoute();
 const processLoading = ref(false);
@@ -14,7 +14,7 @@ const requestTimeout = 30000;
 onMounted(async () => {
   processLoading.value = true;
   const runtimeConfig = useRuntimeConfig();
-  const commonClient = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
+  const commonClient = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   const businessClient = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   organization.value = await commonClient.getOrganizationByName(<string>route.params.orgName);
   publicationsCount.value = await businessClient.getAllPublicationsCount();

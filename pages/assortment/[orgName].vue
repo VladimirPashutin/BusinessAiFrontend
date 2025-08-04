@@ -2,7 +2,7 @@
 import {v4 as uuidv4} from 'uuid';
 import {onMounted, ref} from "vue";
 import {ApiHttpClient} from "~/utils/clientProvider.ts";
-import {type Assortment, CommonDataControllerClient} from "~/utils/apiQueries.ts";
+import {type Assortment, BusinessCommonControllerClient} from "~/utils/apiQueries.ts";
 import AssortmentInfo, {type AssortmentData} from "~/components/AssortmentInfo.vue";
 
 const route = useRoute();
@@ -11,8 +11,8 @@ const assortments = ref([] as Array<AssortmentData>);
 
 onMounted(async () => {
   const runtimeConfig = useRuntimeConfig();
-  const commonClient = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  const getClient = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost, "image/"));
+  const commonClient = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
+  const getClient = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost, "image/"));
   const organization = await commonClient.getOrganizationByName(<string>route.params.orgName);
   const assortmentsList = await commonClient.getAssortmentList(organization.id);
   organizationId.value = organization.id;
@@ -30,7 +30,7 @@ onMounted(async () => {
 
 const deleteAssortment = async (assortment: Assortment) => {
   const runtimeConfig = useRuntimeConfig();
-  const commonClient = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
+  const commonClient = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   for(let image of assortment.images)
   { await commonClient.deleteAssortmentImage(assortment.id, image); }
   await commonClient.deleteAssortment(assortment.id);
