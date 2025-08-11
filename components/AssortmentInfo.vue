@@ -3,7 +3,7 @@ import {ref, toRef} from "vue";
 import type {Assortment} from "~/utils/apiQueries.ts";
 import type {EditorTextChangeEvent} from "primevue/editor";
 import type {FileUploadSelectEvent} from "primevue/fileupload";
-import {CommonDataControllerClient} from "~/utils/apiQueries.ts";
+import {BusinessCommonControllerClient} from "~/utils/apiQueries.ts";
 import {ApiHttpClient, FileUploadClient} from "~/utils/clientProvider.ts";
 
 export type AssortmentData = [Assortment, Array<string | ArrayBuffer>];
@@ -34,8 +34,8 @@ const descriptionChanged =(event: EditorTextChangeEvent) => {
 
 const saveModifications = async () => {
   const runtimeConfig = useRuntimeConfig();
-  const saveClient = new CommonDataControllerClient(new FileUploadClient(runtimeConfig.app.businessHost));
-  const client = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
+  const saveClient = new BusinessCommonControllerClient(new FileUploadClient(runtimeConfig.app.businessHost));
+  const client = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   await client.saveAssortment(orgId.value, assortmentData.value[0]);
   for(let name of imagesForDelete)
   { await client.deleteAssortmentImage(assortmentData.value[0].id, name); }

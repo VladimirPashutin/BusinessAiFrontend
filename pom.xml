@@ -53,6 +53,7 @@
                         <class>ru.pashutin.auth.controller.AuthRegistrationController</class>
                         <class>ru.pashutin.auth.controller.AuthAdministrationController</class>
                         <class>ru.pashutin.business_ai.controller.BusinessAiController</class>
+                        <class>ru.pashutin.business_ai.controller.BusinessCommonController</class>
                         <class>ru.pashutin.business_ai.controller.CommonDataController</class>
                     </classes>
                     <excludeClasses>
@@ -82,24 +83,6 @@
                                     <includes>
                                         <include>*.png</include>
                                         <include>*.js</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-npmrc</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.basedir}/</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.basedir}/../../../../</directory>
-                                    <includes>
-                                        <include>.npmrc</include>
                                     </includes>
                                 </resource>
                             </resources>

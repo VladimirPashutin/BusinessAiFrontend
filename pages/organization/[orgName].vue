@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref, onMounted} from "vue";
 import {ApiHttpClient, newBankDetails, newOrganization} from "~/utils/clientProvider.ts";
-import {type Organization, CommonDataControllerClient} from "~/utils/apiQueries.ts";
+import {type Organization, BusinessCommonControllerClient} from "~/utils/apiQueries.ts";
 
 const route = useRoute();
 const needUpdate = ref(false);
@@ -15,14 +15,14 @@ const updateOrganizationInfo = async (org: Organization) => {
 const saveUpdatedOrganization = async () => {
   const runtimeConfig = useRuntimeConfig();
   console.log('Обновление данных по организации', organization.value.strictOrgName)
-  const client = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
+  const client = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   await client.saveOrganization(organization.value);
   needUpdate.value = false;
 }
 
 onMounted(() => {
   const runtimeConfig = useRuntimeConfig();
-  const client = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
+  const client = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   client.getOrganizationByName(<string>route.params.orgName).then((value) => {
     if(value !== null && value !== undefined) { organization.value = value; }
     else { organization.value = newOrganization();
