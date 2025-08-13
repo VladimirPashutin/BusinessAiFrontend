@@ -8,10 +8,10 @@ const pos = toRef(props, 'position');
 
 <template>
   <Card>
-    <template #header>
+    <template #header>{{pos.name}}</template>
+    <template #title>
       <img v-for="image in pos.images" alt="Изображение" :src="image"/>
     </template>
-    <template #title>{{pos.name}}</template>
     <template #content>
       <p class="m-0" v-html="pos.description"/>
     </template>
