@@ -68,6 +68,8 @@ const onLoadNewImage = (event: FileUploadSelectEvent) => {
     }
   }
   reader.readAsDataURL(event.files[0]);
+  if(selectedImage.value === null)
+  { selectedImage.value = 0; }
   modified.value = true;
 }
 

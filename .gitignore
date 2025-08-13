@@ -1,6 +1,7 @@
 /utils/typescript-generator-info.json
 !.vscode/extensions.json
 **/package-lock.json
+/utils/apiQueries.ts
 web-ext.config.ts
 lerna-debug.log*
 yarn-debug.log*
