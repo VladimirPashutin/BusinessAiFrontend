@@ -27,7 +27,61 @@ const showMainMenu = () => {
   return loggedIn.value;
 }
 
-const mainMenuItems = ref([
+const mainMenuItems = computed(() => {
+  const {user} = useUserSession();
+  if(user.value?.roles?.includes("admin") ||
+     user.value?.roles?.includes("role for admin test")) {
+    return mainMenuAdminItems.value;
+  }
+  return mainMenuCommonItems.value;
+})
+
+const mainMenuAdminItems = ref([
+  {
+    label: 'Данные организации',
+    icon: 'pi pi-building-columns',
+    command: async ()  => {
+      navigateTo('/organization/' + getOrgName())
+    }
+  },
+  {
+    label: 'Лицевой счёт',
+    icon: 'pi pi-money-bill',
+    command: async ()  => {
+      navigateTo('/account/' + getOrgName())
+    }
+  },
+  {
+    label: 'Номенклатура продукции/услуг',
+    icon: 'pi pi-gift',
+    command: async ()  => {
+      navigateTo('/assortment/' + getOrgName());
+    }
+  },
+  {
+    label: 'Отзывы',
+    icon: 'pi pi-megaphone',
+    command: async () => {
+      navigateTo('/reviews/' + getOrgName());
+    }
+  },
+  {
+    label: 'Публикации',
+    icon: 'pi pi-book',
+    command: async () => {
+      navigateTo('/publications/' + getOrgName());
+    }
+  },
+  {
+    label: 'Планы запуска задач ИИ',
+    icon: 'pi pi-microchip-a',
+    command: async () => {
+      navigateTo('/ai-plans');
+    }
+  }
+])
+
+const mainMenuCommonItems = ref([
   {
     label: 'Данные организации',
     icon: 'pi pi-building-columns',
