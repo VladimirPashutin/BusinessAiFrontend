@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {toRef} from "vue";
+import PriceInfo from "~/components/PriceInfo.vue";
 import type {CatalogPosition} from "~/utils/apiQueries.ts";
 
 const props = defineProps<{position: CatalogPosition}>();
@@ -14,10 +15,10 @@ const pos = toRef(props, 'position');
     </template>
     <template #content>
       <p class="m-0" v-html="pos.description"/>
-    </template>
+    </template>+
     <template #footer>
       <div class="flex flex-col gap-4">
-        <Price v-for="price in pos.prices" :price="price"/>
+        <PriceInfo v-for="price in pos.prices" :price="price"/>
       </div>
     </template>
   </Card>

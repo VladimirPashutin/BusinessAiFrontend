@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import {toRef,onMounted} from "vue";
+import {onMounted, toRef} from "vue";
+import {BusinessAiControllerClient} from "~/utils/apiQueries.ts";
 import {ApiHttpClient, truncate} from "~/utils/clientProvider.ts";
-import {CommonDataControllerClient, BusinessAiControllerClient} from "~/utils/apiQueries.ts";
-
-const emits = defineEmits(['reject']);
 
 const props = defineProps<{publication: PublicationsResponse, index: number}>();
 const publication = toRef(props, 'publication');
+const emits = defineEmits(['reject']);
 
 const modified = ref(false);
 const description = ref();
@@ -14,9 +13,10 @@ const image = ref();
 
 onMounted(async () => {
   const runtimeConfig = useRuntimeConfig();
-  const client = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost,'application/octet-stream'));
+  const client = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
+  const imageClient = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost,'application/octet-stream'));
   description.value = truncate((await client.getAssortment(publication.value.assortmentId)).description, 200);
-  const imageBody = await client.getImage(publication.value.images[0]);
+  const imageBody = await imageClient.getImage(publication.value.images[0]);
   if(imageBody) { image.value = URL.createObjectURL(imageBody); }
 });
 
@@ -42,11 +42,11 @@ const rejectPublication = () => {
       <template #title>
         <img alt="Изображение" :src="image"/>
       </template>
-<!--      <template #content>-->
-<!--        <div class="w-10">-->
-<!--          <div v-html="description"/>-->
-<!--        </div>-->
-<!--      </template>-->
+      <template #content>
+        <div class="w-10">
+          <div v-html="description"/>
+        </div>
+      </template>
     </Card>
     <div class="basis-2/3">
       <InputGroup v-if="!considered()" class="flex flex-row-reverse gap-6">
