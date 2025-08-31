@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import AppHeader from "~/components/AppHeader.vue";
-import {BusinessAiControllerClient} from "~/utils/apiQueries.ts"
-import {ApiHttpClient, newOrganization} from "~/utils/clientProvider.ts";
 
 const selectedOrganization = ref(null as string | null);
 
@@ -73,10 +71,10 @@ const mainMenuAdminItems = ref([
     }
   },
   {
-    label: 'Планы запуска задач ИИ',
+    label: 'Планы генерации публикаций',
     icon: 'pi pi-microchip-a',
     command: async () => {
-      navigateTo('/ai-plans');
+      navigateTo('/publication-plans');
     }
   }
 ])
