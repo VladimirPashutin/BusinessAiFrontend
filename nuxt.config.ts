@@ -219,6 +219,7 @@ export default defineNuxtConfig({
         authHost: 'http://auth-service:8080/',
         app: {
             applicationName: 'business-ai',
+            publicationHost: '/',
             businessHost: '/',
             authHost: '/'
         }
