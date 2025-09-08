@@ -797,6 +797,44 @@ export class BusinessAiControllerClient {
     }
 }
 
+export class AuthenticationControllerClient {
+
+    constructor(protected httpClient: HttpClient) {
+    }
+
+    /**
+     * HTTP GET /auth/isLoginExists
+     * Java method: ru.pashutin.auth.controller.AuthenticationController.isLoginExists
+     */
+    isLoginExists(queryParams: { application: string; login: string; }): RestResponse<boolean> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`auth/isLoginExists`, queryParams: queryParams });
+    }
+
+    /**
+     * HTTP POST /auth/login
+     * Java method: ru.pashutin.auth.controller.AuthenticationController.login
+     */
+    login(arg1: LoginRequest): RestResponse<LoginResponse> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/login`, data: arg1 });
+    }
+
+    /**
+     * HTTP POST /auth/refresh
+     * Java method: ru.pashutin.auth.controller.AuthenticationController.getNewRefreshToken
+     */
+    getNewRefreshToken(arg0: RefreshRequest): RestResponse<LoginResponse> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/refresh`, data: arg0 });
+    }
+
+    /**
+     * HTTP POST /auth/token
+     * Java method: ru.pashutin.auth.controller.AuthenticationController.getNewAccessToken
+     */
+    getNewAccessToken(arg0: string): RestResponse<string> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/token`, data: arg0 });
+    }
+}
+
 export class AuthRegistrationControllerClient {
 
     constructor(protected httpClient: HttpClient) {
@@ -840,80 +878,6 @@ export class AuthRegistrationControllerClient {
      */
     restorePassword(arg1: RestorePassword): RestResponse<void> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`auth-registration/restorePassword`, data: arg1 });
-    }
-}
-
-export class AuthenticationControllerClient {
-
-    constructor(protected httpClient: HttpClient) {
-    }
-
-    /**
-     * HTTP GET /auth/isLoginExists
-     * Java method: ru.pashutin.auth.controller.AuthenticationController.isLoginExists
-     */
-    isLoginExists(queryParams: { application: string; login: string; }): RestResponse<boolean> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`auth/isLoginExists`, queryParams: queryParams });
-    }
-
-    /**
-     * HTTP POST /auth/login
-     * Java method: ru.pashutin.auth.controller.AuthenticationController.login
-     */
-    login(arg1: LoginRequest): RestResponse<LoginResponse> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/login`, data: arg1 });
-    }
-
-    /**
-     * HTTP POST /auth/refresh
-     * Java method: ru.pashutin.auth.controller.AuthenticationController.getNewRefreshToken
-     */
-    getNewRefreshToken(arg0: RefreshRequest): RestResponse<LoginResponse> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/refresh`, data: arg0 });
-    }
-
-    /**
-     * HTTP POST /auth/token
-     * Java method: ru.pashutin.auth.controller.AuthenticationController.getNewAccessToken
-     */
-    getNewAccessToken(arg0: string): RestResponse<string> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/token`, data: arg0 });
-    }
-}
-
-export class CommonDataControllerClient {
-
-    constructor(protected httpClient: HttpClient) {
-    }
-
-    /**
-     * HTTP GET /common/catalog/{id}
-     * Java method: ru.pashutin.business_ai.controller.CommonDataController.getCatalog
-     */
-    getCatalog(id: string): RestResponse<GoodsCatalog> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`common/catalog/${id}` });
-    }
-}
-
-export class AuthAdministrationControllerClient {
-
-    constructor(protected httpClient: HttpClient) {
-    }
-
-    /**
-     * HTTP GET /auth-admin/registrationInfo
-     * Java method: ru.pashutin.auth.controller.AuthAdministrationController.getRegistrationInfo
-     */
-    getRegistrationInfo(): RestResponse<RegistrationInfo> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`auth-admin/registrationInfo` });
-    }
-
-    /**
-     * HTTP POST /auth-admin/updateRegistrationInfo
-     * Java method: ru.pashutin.auth.controller.AuthAdministrationController.setRegistrationInfo
-     */
-    setRegistrationInfo(arg0: RegistrationInfo): RestResponse<void> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth-admin/updateRegistrationInfo`, data: arg0 });
     }
 }
 
@@ -1016,6 +980,42 @@ export class BusinessCommonControllerClient {
      */
     saveOrganization(arg0: Organization): RestResponse<void> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`business-common/organizations`, data: arg0 });
+    }
+}
+
+export class AuthAdministrationControllerClient {
+
+    constructor(protected httpClient: HttpClient) {
+    }
+
+    /**
+     * HTTP GET /auth-admin/registrationInfo
+     * Java method: ru.pashutin.auth.controller.AuthAdministrationController.getRegistrationInfo
+     */
+    getRegistrationInfo(): RestResponse<RegistrationInfo> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`auth-admin/registrationInfo` });
+    }
+
+    /**
+     * HTTP POST /auth-admin/updateRegistrationInfo
+     * Java method: ru.pashutin.auth.controller.AuthAdministrationController.setRegistrationInfo
+     */
+    setRegistrationInfo(arg0: RegistrationInfo): RestResponse<void> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth-admin/updateRegistrationInfo`, data: arg0 });
+    }
+}
+
+export class CommonDataControllerClient {
+
+    constructor(protected httpClient: HttpClient) {
+    }
+
+    /**
+     * HTTP GET /common/catalog/{id}
+     * Java method: ru.pashutin.business_ai.controller.CommonDataController.getCatalog
+     */
+    getCatalog(id: string): RestResponse<GoodsCatalog> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`common/catalog/${id}` });
     }
 }
 
