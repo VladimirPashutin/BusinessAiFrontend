@@ -67,7 +67,7 @@ const requestPublication = async () => {
   canNotRequestPublication.value = true;
   const runtimeConfig = useRuntimeConfig();
   const client = new ApiHttpClient(runtimeConfig.app.publicationHost);
-  let uri = "/publication/" + encodeURIComponent(organization.value.strictOrgName);
+  let uri = "publication/" + encodeURIComponent(organization.value.strictOrgName);
   if(selectedAssortment.value !== null) {
     uri = uri + "/" + encodeURIComponent(selectedAssortment.value.id);
     if(selectedImageName.value !== null)
