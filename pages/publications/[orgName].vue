@@ -74,6 +74,7 @@ const requestPublication = async () => {
     { uri = uri + "/" + encodeURIComponent(selectedImageName.value); }
   }
   try { await client.request({method: "POST", url: uri}); }
+  catch (error: unknown) { console.error("Can not make publication ", error); }
   finally { canNotRequestPublication.value = false; }
   reloadNuxtApp();
 }
