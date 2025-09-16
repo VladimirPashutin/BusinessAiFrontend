@@ -73,8 +73,8 @@ const requestPublication = async () => {
     if(selectedImageName.value !== null)
     { uri = uri + "/" + encodeURIComponent(selectedImageName.value); }
   }
-  await client.request({ method: "POST", url: uri});
-  canNotRequestPublication.value = false;
+  try { await client.request({method: "POST", url: uri}); }
+  finally { canNotRequestPublication.value = false; }
   reloadNuxtApp();
 }
 </script>
