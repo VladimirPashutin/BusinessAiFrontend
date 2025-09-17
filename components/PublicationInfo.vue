@@ -1,24 +1,13 @@
 <script setup lang="ts">
-import {onMounted, toRef} from "vue";
+import {toRef} from "vue";
 import {BusinessAiControllerClient} from "~/utils/apiQueries.ts";
-import {ApiHttpClient, truncate} from "~/utils/clientProvider.ts";
+import {ApiHttpClient, PublicationInfoData} from "~/utils/clientProvider.ts";
 
-const props = defineProps<{publication: PublicationsResponse, index: number}>();
+const props = defineProps<{publication: PublicationInfoData, index: number}>();
 const publication = toRef(props, 'publication');
 const emits = defineEmits(['reject']);
 
 const modified = ref(false);
-const description = ref();
-const image = ref();
-
-onMounted(async () => {
-  const runtimeConfig = useRuntimeConfig();
-  const client = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  const imageClient = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost,'application/octet-stream'));
-  description.value = truncate((await client.getAssortment(publication.value.assortmentId)).description, 200);
-  const imageBody = await imageClient.getImage(publication.value.images[0]);
-  if(imageBody) { image.value = URL.createObjectURL(imageBody); }
-});
 
 const considered = () => {
   return publication.value.readyState === "READY";
@@ -40,12 +29,28 @@ const rejectPublication = () => {
   <div class="flex flex-row gap-2">
     <Card class="basis-1/3">
       <template #title>
-        <img alt="Изображение" :src="image"/>
+        <Carousel v-if="publication.images.length > 0" :value="publication.images">
+          <template #item="slotProps">
+            <div>
+              <div>
+                <Image alt="Фото продукта" height="160" preview>
+                  <template #previewicon>
+                    <i class="pi pi-search"/>
+                  </template>
+                  <template #image>
+                    <img :src="slotProps.data" alt="Фото продукта"/>
+                  </template>
+                  <template #preview="imageProps">
+                    <img :src="slotProps.data" alt="Фото продукта" :style="imageProps.style"/>
+                  </template>
+                </Image>
+              </div>
+            </div>
+          </template>
+        </Carousel>
       </template>
       <template #content>
-        <div class="w-10">
-          <div v-html="description"/>
-        </div>
+        <Editor class="w-full" id="description" v-model="publication.description" readonly/>
       </template>
     </Card>
     <div class="basis-2/3">
@@ -63,5 +68,7 @@ const rejectPublication = () => {
 </template>
 
 <style scoped>
-
+:deep(.p-editor-toolbar) {
+  display: none;
+}
 </style>
