@@ -154,7 +154,7 @@ const close = () => {
           <label for="login">Имя пользователя:</label>
         </InputGroupAddon>
         <InputText id="login" name="login" type="text" variant="filled"
-                   autocomplete="username" autofocus v-symbolModel="loginModel"/>
+                   autocomplete="username" autofocus v-model="loginModel"/>
       </InputGroup>
       <InputGroup>
         <InputGroupAddon>
@@ -162,7 +162,7 @@ const close = () => {
         </InputGroupAddon>
         <Password id="password" name="password" type="password" :feedback="false" variant="filled"
                   :inputProps="{ autocomplete: 'current-password' }" @keyup.enter="passwordClicked($form)"
-                  @update:symbolModel-value="localError = ''"/>
+                  @update:model-value="localError = ''"/>
       </InputGroup>
       <div v-if="showRegistrationForm">
         <InputGroup>

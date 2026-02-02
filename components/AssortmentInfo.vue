@@ -88,12 +88,12 @@ const deleteSelectedImage = () => {
     <InputGroup class="gap-2">
       <InputGroupAddon class="gap-2">
         <label for="name">Наименование</label>
-        <InputText id="name" v-symbolModel.trim="assortmentData[0].name" autofocus placeholder="Введите наименование"
+        <InputText id="name" v-model.trim="assortmentData[0].name" autofocus placeholder="Введите наименование"
                   :invalid="!assortmentData[0].name" fluid @change="modified = true" />
       </InputGroupAddon>
       <InputGroupAddon class="gap-2">
         <label for="article">Артикул</label>
-        <InputText id="article" v-symbolModel.trim="assortmentData[0].article" fluid @change="modified = true"
+        <InputText id="article" v-model.trim="assortmentData[0].article" fluid @change="modified = true"
                    placeholder="Введите артикул"/>
       </InputGroupAddon>
       <Button severity="warn" @click="$emit('delete', assortmentData[0])">Удалить</Button>
@@ -126,7 +126,7 @@ const deleteSelectedImage = () => {
           <Button severity="warn" @click="deleteSelectedImage" class="pi pi-minus"> Удалить</Button>
         </InputGroup>
       </div>
-      <Editor class="basis-2/3" id="description" v-symbolModel="assortmentData[0].description"
+      <Editor class="basis-2/3" id="description" v-model="assortmentData[0].description"
               placeholder="Введите описание" @text-change="descriptionChanged" />
     </InputGroup>
   </div>

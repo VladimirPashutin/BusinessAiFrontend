@@ -12,24 +12,24 @@ const organization = toRef(props, 'organization');
       <InputGroupAddon>
         <label>Полное наименование организации</label>
       </InputGroupAddon>
-      <InputText v-symbolModel="organization.fullOrganizationName"
+      <InputText v-model="organization.fullOrganizationName"
                  @change="$emit('update', organization)"/>
     </InputGroup>
     <InputGroup>
       <InputGroupAddon>
         <label for="inn">ИНН</label>
       </InputGroupAddon>
-      <InputText v-symbolModel="organization.inn" name="inn"
+      <InputText v-model="organization.inn" name="inn"
                  @change="$emit('update', organization)"/>
       <InputGroupAddon>
         <label for="ogrn">ОГРН</label>
       </InputGroupAddon>
-      <InputText v-symbolModel="organization.ogrn" name="ogrn"
+      <InputText v-model="organization.ogrn" name="ogrn"
                  @change="$emit('update', organization)"/>
       <InputGroupAddon>
         <label for="okved">ОКВЭД</label>
       </InputGroupAddon>
-      <InputText v-symbolModel="organization.okved" name="okved"
+      <InputText v-model="organization.okved" name="okved"
                  @change="$emit('update', organization)"/>
     </InputGroup>
     <GovernanceInfo :governance="organization.governance" :org-name="organization.strictOrgName"

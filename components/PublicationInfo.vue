@@ -60,8 +60,8 @@ const rejectPublication = () => {
       </InputGroup>
       <FloatLabel variant="on" class="w-full">
         <label for="request">Сообщение для публикации</label>
-        <Textarea id="request" v-symbolModel="publication.note" class="w-full" style="min-height: 300px"
-                  @update:symbolModel-value="modified = true" :disabled="considered()"/>
+        <Textarea id="request" v-model="publication.note" class="w-full" style="min-height: 300px"
+                  @update:model-value="modified = true" :disabled="considered()"/>
       </FloatLabel>
     </div>
   </div>

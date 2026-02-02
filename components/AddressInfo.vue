@@ -18,6 +18,6 @@ const prepareCandidates = () => {
     <InputGroupAddon>
       <label for="address">{{addressType}}</label>
     </InputGroupAddon>
-    <InputText v-symbolModel="addressInfo.value" name="address" @change="$emit('update', addressInfo)"/>
+    <InputText v-model="addressInfo.value" name="address" @change="$emit('update', addressInfo)"/>
   </InputGroup>
 </template>
