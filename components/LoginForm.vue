@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {Form} from "@primevue/forms";
-import {ref, computed} from "@vue/reactivity";
+import {computed, ref} from "@vue/reactivity";
 import {ApiHttpClient} from "../utils/clientProvider.ts";
 import {makeCredentialsByForm, makeCredentialsFromData} from "../utils/login.d.ts";
 import {AuthenticationControllerClient, AuthRegistrationControllerClient} from "../utils/apiQueries.ts"
@@ -154,7 +154,7 @@ const close = () => {
           <label for="login">Имя пользователя:</label>
         </InputGroupAddon>
         <InputText id="login" name="login" type="text" variant="filled"
-                   autocomplete="username" autofocus v-model="loginModel"/>
+                   autocomplete="username" autofocus v-symbolModel="loginModel"/>
       </InputGroup>
       <InputGroup>
         <InputGroupAddon>
@@ -162,7 +162,7 @@ const close = () => {
         </InputGroupAddon>
         <Password id="password" name="password" type="password" :feedback="false" variant="filled"
                   :inputProps="{ autocomplete: 'current-password' }" @keyup.enter="passwordClicked($form)"
-                  @update:model-value="localError = ''"/>
+                  @update:symbolModel-value="localError = ''"/>
       </InputGroup>
       <div v-if="showRegistrationForm">
         <InputGroup>

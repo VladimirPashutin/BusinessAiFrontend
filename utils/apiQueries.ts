@@ -420,6 +420,38 @@ export class GoodsProperty extends Property {
     }
 }
 
+export class CatalogPosition extends Assortment {
+    /**
+     * Производитель
+     */
+    manufacturer: OrganizationRef;
+    /**
+     * Группы классификации к которым относится данная товарная позиция
+     */
+    groupId: string[];
+    /**
+     * Состав данной позиции
+     */
+    part: Assortment[];
+    /**
+     * Ценовые предложения
+     */
+    price: Price[];
+    /**
+     * Идентификатор каталога
+     */
+    catalogId: string;
+
+    constructor(data: CatalogPosition) {
+        super(data);
+        this.manufacturer = data.manufacturer;
+        this.groupId = data.groupId;
+        this.part = data.part;
+        this.price = data.price;
+        this.catalogId = data.catalogId;
+    }
+}
+
 export class AddressObject {
     /**
      * Текстовое представление адреса

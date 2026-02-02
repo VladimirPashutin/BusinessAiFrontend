@@ -12,9 +12,9 @@ const contact = toRef(props, 'contact');
     <InputGroupAddon>
       <label for="contactKind">Контактные данные</label>
     </InputGroupAddon>
-    <Select v-model="contact.kind" name="contactKind" style="max-width: 150px"
+    <Select v-symbolModel="contact.kind" name="contactKind" style="max-width: 150px"
             :options="contactTypes"  @change="$emit('update', contact)"/>
-    <InputText v-model="contact.value" name="contactValue"
+    <InputText v-symbolModel="contact.value" name="contactValue"
                @change="$emit('update', contact)"/>
   </InputGroup>
 </template>

@@ -26,18 +26,18 @@ const director = computed({
       <InputGroupAddon>
         <label for="governance">Управляющий орган</label>
       </InputGroupAddon>
-      <Select v-model="governance.kind" name="governance" :options="governanceTypes" style="max-width: 250px"
+      <Select v-symbolModel="governance.kind" name="governance" :options="governanceTypes" style="max-width: 250px"
               placeholder="Укажите управляющий орган" @change="$emit('update', governance)" class="w-10"/>
-      <InputText v-model="director" name="direct" @change="$emit('update', governance)"/>
+      <InputText v-symbolModel="director" name="direct" @change="$emit('update', governance)"/>
     </InputGroup>
 <!--    <InputGroup>-->
 <!--      <FloatLabel variant="on">-->
 <!--        <label for="start">Начало управления</label>-->
-<!--        <DatePicker v-model="start" name="start" @update:model-value="updateDirection"/>-->
+<!--        <DatePicker v-symbolModel="start" name="start" @update:symbolModel-value="updateDirection"/>-->
 <!--      </FloatLabel>-->
 <!--      <FloatLabel variant="on">-->
 <!--        <label for="end">Окончание управления</label>-->
-<!--        <DatePicker v-model="end" name="end" @update:model-value="updateDirection"/>-->
+<!--        <DatePicker v-symbolModel="end" name="end" @update:symbolModel-value="updateDirection"/>-->
 <!--      </FloatLabel>-->
 <!--    </InputGroup>-->
   </div>

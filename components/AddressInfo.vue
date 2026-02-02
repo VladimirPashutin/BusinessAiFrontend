@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref,toRef} from "vue";
+import {ref, toRef} from "vue";
 
 defineEmits(['update']);
 const props = withDefaults(defineProps<{address: AddressObject,
@@ -18,6 +18,6 @@ const prepareCandidates = () => {
     <InputGroupAddon>
       <label for="address">{{addressType}}</label>
     </InputGroupAddon>
-    <InputText v-model="addressInfo.value" name="address" @change="$emit('update', addressInfo)"/>
+    <InputText v-symbolModel="addressInfo.value" name="address" @change="$emit('update', addressInfo)"/>
   </InputGroup>
 </template>

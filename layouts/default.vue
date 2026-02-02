@@ -122,7 +122,7 @@ const mainMenuCommonItems = ref([
   <div>
     <AppHeader @navigate-to-home="navigateToHome" @setOrgName="selectOrganization"/>
     <div style="min-height: 90svh" class="flex">
-      <Menu class="basis-1/4 h-full" v-if="showMainMenu()" :model="mainMenuItems"/>
+      <Menu class="basis-1/4 h-full" v-if="showMainMenu()" :symbolModel="mainMenuItems"/>
       <slot class="basis-3/4 h-full"/>
     </div>
   </div>

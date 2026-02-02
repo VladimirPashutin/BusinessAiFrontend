@@ -26,7 +26,7 @@ const organizationName = ref(null as any as string);
       <img @click="$emit('navigateToHome')" src="../public/favicon.ico" alt="t3t"/>
     </template>
     <template #end>
-      <Select v-if="organizationCount() > 1" v-model="organizationName" :options="organizationList()"
+      <Select v-if="organizationCount() > 1" v-symbolModel="organizationName" :options="organizationList()"
               @update:modelValue="$emit('setOrgName', organizationName)"
               placeholder="Выберите организацию для работы"/>
       <Divider v-if="organizationCount() > 1" layout="vertical" />

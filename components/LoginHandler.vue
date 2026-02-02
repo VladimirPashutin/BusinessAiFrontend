@@ -2,6 +2,7 @@
 import {ref} from "vue"
 import Button from 'primevue/button';
 import LoginForm from "~/components/LoginForm.vue";
+
 const { loggedIn, user, clear, fetch: refreshSession } = useUserSession();
 
 const loginMenu = ref();
@@ -40,7 +41,7 @@ const closeLoginForm = () => {
   <div>
     <Button :label="userLoginLabel()" :icon="userLoginIcon()"
             @click="processLogin" aria-haspopup="true" aria-controls="overlay_tmenu"/>
-    <TieredMenu ref="loginMenu" id="loginMenu" :model="loginMenuItems" popup />
+    <TieredMenu ref="loginMenu" id="loginMenu" :symbolModel="loginMenuItems" popup />
     <LoginForm :show-dialog="showLoginForm" @close="closeLoginForm()" @login="loginFinished()"/>
   </div>
 </template>
