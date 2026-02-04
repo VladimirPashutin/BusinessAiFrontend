@@ -754,6 +754,20 @@ export class AuthenticationControllerClient {
     }
 }
 
+export class CommonDataControllerClient {
+
+    constructor(protected httpClient: HttpClient) {
+    }
+
+    /**
+     * HTTP GET /common/catalog/{id}
+     * Java method: ru.pashutin.business_ai.controller.CommonDataController.getCatalog
+     */
+    getCatalog(id: string): RestResponse<GoodsCatalog> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`common/catalog/${id}` });
+    }
+}
+
 export class BusinessCommonControllerClient {
 
     constructor(protected httpClient: HttpClient) {
@@ -977,20 +991,6 @@ export class AuthAdministrationControllerClient {
      */
     setRegistrationInfo(arg0: RegistrationInfo): RestResponse<void> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`auth-admin/updateRegistrationInfo`, data: arg0 });
-    }
-}
-
-export class CommonDataControllerClient {
-
-    constructor(protected httpClient: HttpClient) {
-    }
-
-    /**
-     * HTTP GET /common/catalog/{id}
-     * Java method: ru.pashutin.business_ai.controller.CommonDataController.getCatalog
-     */
-    getCatalog(id: string): RestResponse<GoodsCatalog> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`common/catalog/${id}` });
     }
 }
 
