@@ -14,6 +14,16 @@ export default defineNuxtConfig({
 
     modules: ['@primevue/nuxt-module', 'nuxt-auth-utils', '@nuxtjs/tailwindcss'],
 
+    nitro: {
+      routeRules: {
+        '/ai/**': { proxy: 'http://localhost:8448/ai/**' },
+        '/auth/**': { proxy: 'http://localhost:8118/auth/**' },
+        '/business-common/**': { proxy: 'http://localhost:8448/business-common/**' },
+        '/common/**': { proxy: 'http://localhost:8448/common/**' },
+        '/hooded/**': { proxy: 'http://localhost:8448/hooded/**' }
+      }
+    },
+
     primevue: {
         components: {
             include: ['Accordion', 'Avatar', 'AutoComplete', 'Badge', 'Breadcrumb', 'Button', 'Calendar', 'Card',
@@ -216,7 +226,7 @@ export default defineNuxtConfig({
     },
 
     runtimeConfig: {
-        authHost: 'http://auth-service:8080/',
+        authHost: 'http://localhost:8118/',
         app: {
             applicationName: 'business-ai',
             publicationHost: '/',

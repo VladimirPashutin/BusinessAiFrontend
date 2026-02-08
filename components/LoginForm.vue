@@ -27,7 +27,7 @@ const errorMessageText = computed(() => {
 });
 
 const [loginModel] = defineModel({
-  set(value) {
+  set(value: string) {
     if (value === null || value === undefined || value.length === 0) {
       validLogin.value = false;
       return value;
