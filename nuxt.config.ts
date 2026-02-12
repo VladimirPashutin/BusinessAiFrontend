@@ -19,8 +19,7 @@ export default defineNuxtConfig({
         '/ai/**': { proxy: 'http://localhost:8448/ai/**' },
         '/auth/**': { proxy: 'http://localhost:8118/auth/**' },
         '/business-common/**': { proxy: 'http://localhost:8448/business-common/**' },
-        '/common/**': { proxy: 'http://localhost:8448/common/**' },
-        '/hooded/**': { proxy: 'http://localhost:8448/hooded/**' }
+        '/common/**': { proxy: 'http://localhost:8448/common/**' }
       }
     },
 
