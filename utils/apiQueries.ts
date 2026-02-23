@@ -692,6 +692,146 @@ export class AuthAdministrationControllerClient {
     }
 }
 
+export class AuthRegistrationControllerClient {
+
+    constructor(protected httpClient: HttpClient) {
+    }
+
+    /**
+     * HTTP GET /auth-registration/accept/{acceptId}
+     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.acceptRegistration
+     */
+    acceptRegistration(acceptId: string): RestResponse<boolean> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`auth-registration/accept/${acceptId}` });
+    }
+
+    /**
+     * HTTP POST /auth-registration/changePassword
+     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.changePassword
+     */
+    changePassword(arg0: ChangePassword): RestResponse<boolean> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth-registration/changePassword`, data: arg0 });
+    }
+
+    /**
+     * HTTP GET /auth-registration/generateKey
+     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.generateKey
+     */
+    generateKey(): RestResponse<string> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`auth-registration/generateKey` });
+    }
+
+    /**
+     * HTTP POST /auth-registration/registration
+     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.registration
+     */
+    registration(arg1: RegistrationRequest): RestResponse<string> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth-registration/registration`, data: arg1 });
+    }
+
+    /**
+     * HTTP POST /auth-registration/restorePassword
+     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.restorePassword
+     */
+    restorePassword(arg1: RestorePassword): RestResponse<void> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth-registration/restorePassword`, data: arg1 });
+    }
+}
+
+export class BusinessCommonControllerClient {
+
+    constructor(protected httpClient: HttpClient) {
+    }
+
+    /**
+     * HTTP GET /business-common/assortment/images/{id}
+     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.getAssortmentImages
+     */
+    getAssortmentImages(id: string): RestResponse<string[]> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`business-common/assortment/images/${id}` });
+    }
+
+    /**
+     * HTTP DELETE /business-common/assortment/images/{id}/{name}
+     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.deleteAssortmentImage
+     */
+    deleteAssortmentImage(id: string, name: string): RestResponse<void> {
+        return this.httpClient.request({ method: "DELETE", url: uriEncoding`business-common/assortment/images/${id}/${name}` });
+    }
+
+    /**
+     * HTTP POST /business-common/assortment/images/{id}/{name}
+     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.saveAssortmentImage
+     */
+    saveAssortmentImage(id: string, name: string, queryParams: { file: any; }): RestResponse<void> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`business-common/assortment/images/${id}/${name}`, queryParams: queryParams });
+    }
+
+    /**
+     * HTTP GET /business-common/assortment/{id}
+     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.getAssortment
+     */
+    getAssortment(id: string): RestResponse<Assortment> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`business-common/assortment/${id}` });
+    }
+
+    /**
+     * HTTP DELETE /business-common/assortments/{id}
+     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.deleteAssortment
+     */
+    deleteAssortment(id: string): RestResponse<void> {
+        return this.httpClient.request({ method: "DELETE", url: uriEncoding`business-common/assortments/${id}` });
+    }
+
+    /**
+     * HTTP GET /business-common/assortments/{orgId}
+     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.getAssortmentList
+     */
+    getAssortmentList(orgId: string): RestResponse<Assortment[]> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`business-common/assortments/${orgId}` });
+    }
+
+    /**
+     * HTTP POST /business-common/assortments/{orgId}
+     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.saveAssortment
+     */
+    saveAssortment(orgId: string, arg1: Assortment): RestResponse<void> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`business-common/assortments/${orgId}`, data: arg1 });
+    }
+
+    /**
+     * HTTP GET /business-common/organization/{id}
+     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.getOrganizationById
+     */
+    getOrganizationById(id: string): RestResponse<Organization> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`business-common/organization/${id}` });
+    }
+
+    /**
+     * HTTP GET /business-common/organizationByName/{name}
+     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.getOrganizationByName
+     */
+    getOrganizationByName(name: string): RestResponse<Organization> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`business-common/organizationByName/${name}` });
+    }
+
+    /**
+     * HTTP POST /business-common/organizations
+     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.saveOrganization
+     */
+    saveOrganization(arg0: Organization): RestResponse<void> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`business-common/organizations`, data: arg0 });
+    }
+
+    /**
+     * HTTP POST /business-common/organizations/{orgId}
+     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.saveAssortmentsFromExcel
+     */
+    saveAssortmentsFromExcel(orgId: string, queryParams: { file: any; }): RestResponse<void> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`business-common/organizations/${orgId}`, queryParams: queryParams });
+    }
+}
+
 export class CommonDataControllerClient {
 
     constructor(protected httpClient: HttpClient) {
@@ -704,43 +844,13 @@ export class CommonDataControllerClient {
     getCatalog(id: string): RestResponse<GoodsCatalog> {
         return this.httpClient.request({ method: "GET", url: uriEncoding`common/catalog/${id}` });
     }
-}
-
-export class AuthenticationControllerClient {
-
-    constructor(protected httpClient: HttpClient) {
-    }
 
     /**
-     * HTTP GET /auth/isLoginExists
-     * Java method: ru.pashutin.auth.controller.AuthenticationController.isLoginExists
+     * HTTP GET /common/images/{id}
+     * Java method: ru.pashutin.business_ai.controller.CommonDataController.getImage
      */
-    isLoginExists(queryParams: { application: string; login: string; }): RestResponse<boolean> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`auth/isLoginExists`, queryParams: queryParams });
-    }
-
-    /**
-     * HTTP POST /auth/login
-     * Java method: ru.pashutin.auth.controller.AuthenticationController.login
-     */
-    login(arg1: LoginRequest): RestResponse<LoginResponse> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/login`, data: arg1 });
-    }
-
-    /**
-     * HTTP POST /auth/refresh
-     * Java method: ru.pashutin.auth.controller.AuthenticationController.getNewRefreshToken
-     */
-    getNewRefreshToken(arg0: RefreshRequest): RestResponse<LoginResponse> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/refresh`, data: arg0 });
-    }
-
-    /**
-     * HTTP POST /auth/token
-     * Java method: ru.pashutin.auth.controller.AuthenticationController.getNewAccessToken
-     */
-    getNewAccessToken(arg0: string): RestResponse<string> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/token`, data: arg0 });
+    getImage(id: string): RestResponse<any> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`common/images/${id}` });
     }
 }
 
@@ -854,151 +964,41 @@ export class BusinessAiControllerClient {
     }
 }
 
-export class BusinessCommonControllerClient {
+export class AuthenticationControllerClient {
 
     constructor(protected httpClient: HttpClient) {
     }
 
     /**
-     * HTTP GET /business-common/assortment/images/{id}
-     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.getAssortmentImages
+     * HTTP GET /auth/isLoginExists
+     * Java method: ru.pashutin.auth.controller.AuthenticationController.isLoginExists
      */
-    getAssortmentImages(id: string): RestResponse<string[]> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`business-common/assortment/images/${id}` });
+    isLoginExists(queryParams: { application: string; login: string; }): RestResponse<boolean> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`auth/isLoginExists`, queryParams: queryParams });
     }
 
     /**
-     * HTTP DELETE /business-common/assortment/images/{id}/{name}
-     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.deleteAssortmentImage
+     * HTTP POST /auth/login
+     * Java method: ru.pashutin.auth.controller.AuthenticationController.login
      */
-    deleteAssortmentImage(id: string, name: string): RestResponse<void> {
-        return this.httpClient.request({ method: "DELETE", url: uriEncoding`business-common/assortment/images/${id}/${name}` });
+    login(arg1: LoginRequest): RestResponse<LoginResponse> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/login`, data: arg1 });
     }
 
     /**
-     * HTTP POST /business-common/assortment/images/{id}/{name}
-     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.saveAssortmentImage
+     * HTTP POST /auth/refresh
+     * Java method: ru.pashutin.auth.controller.AuthenticationController.getNewRefreshToken
      */
-    saveAssortmentImage(id: string, name: string, queryParams: { file: any; }): RestResponse<void> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`business-common/assortment/images/${id}/${name}`, queryParams: queryParams });
+    getNewRefreshToken(arg0: RefreshRequest): RestResponse<LoginResponse> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/refresh`, data: arg0 });
     }
 
     /**
-     * HTTP GET /business-common/assortment/{id}
-     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.getAssortment
+     * HTTP POST /auth/token
+     * Java method: ru.pashutin.auth.controller.AuthenticationController.getNewAccessToken
      */
-    getAssortment(id: string): RestResponse<Assortment> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`business-common/assortment/${id}` });
-    }
-
-    /**
-     * HTTP DELETE /business-common/assortments/{id}
-     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.deleteAssortment
-     */
-    deleteAssortment(id: string): RestResponse<void> {
-        return this.httpClient.request({ method: "DELETE", url: uriEncoding`business-common/assortments/${id}` });
-    }
-
-    /**
-     * HTTP GET /business-common/assortments/{orgId}
-     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.getAssortmentList
-     */
-    getAssortmentList(orgId: string): RestResponse<Assortment[]> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`business-common/assortments/${orgId}` });
-    }
-
-    /**
-     * HTTP POST /business-common/assortments/{orgId}
-     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.saveAssortment
-     */
-    saveAssortment(orgId: string, arg1: Assortment): RestResponse<void> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`business-common/assortments/${orgId}`, data: arg1 });
-    }
-
-    /**
-     * HTTP GET /business-common/images/{id}
-     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.getImage
-     */
-    getImage(id: string): RestResponse<any> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`business-common/images/${id}` });
-    }
-
-    /**
-     * HTTP GET /business-common/organization/{id}
-     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.getOrganizationById
-     */
-    getOrganizationById(id: string): RestResponse<Organization> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`business-common/organization/${id}` });
-    }
-
-    /**
-     * HTTP GET /business-common/organizationByName/{name}
-     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.getOrganizationByName
-     */
-    getOrganizationByName(name: string): RestResponse<Organization> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`business-common/organizationByName/${name}` });
-    }
-
-    /**
-     * HTTP POST /business-common/organizations
-     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.saveOrganization
-     */
-    saveOrganization(arg0: Organization): RestResponse<void> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`business-common/organizations`, data: arg0 });
-    }
-
-    /**
-     * HTTP POST /business-common/organizations/{orgId}
-     * Java method: ru.pashutin.business_ai.controller.BusinessCommonController.saveAssortmentsFromExcel
-     */
-    saveAssortmentsFromExcel(orgId: string, queryParams: { file: any; }): RestResponse<void> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`business-common/organizations/${orgId}`, queryParams: queryParams });
-    }
-}
-
-export class AuthRegistrationControllerClient {
-
-    constructor(protected httpClient: HttpClient) {
-    }
-
-    /**
-     * HTTP GET /auth-registration/accept/{acceptId}
-     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.acceptRegistration
-     */
-    acceptRegistration(acceptId: string): RestResponse<boolean> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`auth-registration/accept/${acceptId}` });
-    }
-
-    /**
-     * HTTP POST /auth-registration/changePassword
-     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.changePassword
-     */
-    changePassword(arg0: ChangePassword): RestResponse<boolean> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth-registration/changePassword`, data: arg0 });
-    }
-
-    /**
-     * HTTP GET /auth-registration/generateKey
-     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.generateKey
-     */
-    generateKey(): RestResponse<string> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`auth-registration/generateKey` });
-    }
-
-    /**
-     * HTTP POST /auth-registration/registration
-     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.registration
-     */
-    registration(arg1: RegistrationRequest): RestResponse<string> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth-registration/registration`, data: arg1 });
-    }
-
-    /**
-     * HTTP POST /auth-registration/restorePassword
-     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.restorePassword
-     */
-    restorePassword(arg1: RestorePassword): RestResponse<void> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth-registration/restorePassword`, data: arg1 });
+    getNewAccessToken(arg0: string): RestResponse<string> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/token`, data: arg0 });
     }
 }
 

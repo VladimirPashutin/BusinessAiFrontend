@@ -89,7 +89,7 @@ const requestPublication = async () => {
   if(selectedAssortment.value !== null) {
     uri = uri + "/" + selectedAssortment.value.id;
     if(selectedImageName.value !== null)
-    { uri = uri + "/" + selectedImageName.value; }
+    { uri = uri + "|" + selectedImageName.value; }
   }
   try { await client.request({method: "POST", url: uri}); }
   catch (error: unknown) { console.error("Can not make publication ", error); }
