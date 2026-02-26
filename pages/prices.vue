@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { ApiHttpClient } from '~/utils/clientProvider.ts';
-import { CommonDataControllerClient } from '~/utils/apiQueries.ts';
+import {ref, onMounted, computed} from 'vue';
+import {GoodsCatalog} from '~/utils/apiQueries.ts';
+import {getCommonDataClient} from '~/utils/clientProvider.ts';
 
 const catalog = ref(null as unknown as GoodsCatalog)
 
 onMounted(async () => {
-  const runtimeConfig = useRuntimeConfig();
-  const client = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  catalog.value = await client.getCatalog('39f58bb6-2d6e-4e8c-992f-e1dd1ac3b46b');
+  catalog.value = await getCommonDataClient().getCatalog('39f58bb6-2d6e-4e8c-992f-e1dd1ac3b46b');
 })
 
 const header = computed(() => {
@@ -26,10 +24,10 @@ const description = computed(() => {
 })
 
 const positions = computed(() => {
-  if(catalog.value === null || catalog.value === undefined || catalog.value.catalogPositions === null) {
+  if(catalog.value === null || catalog.value === undefined || catalog.value.catalogPosition === null) {
     return []
   }
-  return catalog.value.catalogPositions;
+  return catalog.value.catalogPosition;
 })
 </script>
 

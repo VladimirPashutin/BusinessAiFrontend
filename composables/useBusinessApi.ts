@@ -9,6 +9,6 @@ export default function useBusinessApi<T>(
     return useFetch(url, {
         ...options,
         // @ts-ignore
-        $fetch: $apiProvider(runtimeConfig.app.businessApiUrl) as typeof $fetch
+        $fetch: $apiProvider(runtimeConfig.public.businessHost) as typeof $fetch
     })
 }

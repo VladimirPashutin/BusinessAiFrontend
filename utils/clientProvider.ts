@@ -23,6 +23,7 @@ export class ApiHttpClient implements HttpClient {
     async request<R>(requestConfig: {
         method: string; url: string; queryParams?: any;
         data?: any; copyFn?: (data: R) => R;
+    //@ts-ignore
     }): RestResponse<R> {
         let url = this.host + requestConfig.url;
         if (requestConfig.queryParams !== null && requestConfig.queryParams !== undefined) {
@@ -32,19 +33,25 @@ export class ApiHttpClient implements HttpClient {
         if (this.contentType === "application/json" && requestConfig.data !== undefined) {
             bodyData = JSON.stringify(requestConfig.data);
         }
+        const { loggedIn } = useUserSession();
         const token = await $fetch("/api/refresh", {"method": "POST"});
         if(token === null || token === undefined) {
-            if(bodyData === undefined) {
+            if(loggedIn.value) { navigateTo('/'); }
+            else if(bodyData === undefined) {
                 //@ts-ignore
                 return $fetch(url, { method: requestConfig.method, headers: {
                         "content-type": this.contentType
                     }
+                }).catch((e) => { console.warn("Ошибка обращения к серверу", e);
+                  navigateTo('/');
                 });
             } else {
                 //@ts-ignore
                 return $fetch(url, { method: requestConfig.method, headers: {
                         "content-type": this.contentType
                     }, body: bodyData
+                }).catch((e) => { console.warn("Ошибка обращения к серверу", e);
+                  navigateTo('/');
                 });
             }
         } else if(bodyData === undefined) {
@@ -53,6 +60,8 @@ export class ApiHttpClient implements HttpClient {
                     "content-type": this.contentType,
                     "Authorization": token
                 }
+            }).catch((e) => { console.warn("Ошибка обращения к серверу", e);
+              navigateTo('/');
             });
         } else {
             //@ts-ignore
@@ -60,6 +69,8 @@ export class ApiHttpClient implements HttpClient {
                     "content-type": this.contentType,
                     "Authorization": token
                 }, body: bodyData
+            }).catch((e) => { console.warn("Ошибка обращения к серверу", e);
+              navigateTo('/');
             });
         }
     }
@@ -82,22 +93,32 @@ export class FileUploadClient implements HttpClient {
         if(url.startsWith('http')) {
             if (token === null || token === undefined) {
                 //@ts-ignore
-                return $fetch("", { baseURL: url, method: requestConfig.method, body: data});
+                return $fetch("", { baseURL: url, method: requestConfig.method, body: data}).
+                catch((e) => { console.warn("Ошибка обращения к серверу", e);
+                  navigateTo('/');
+                });
             } else {
                 //@ts-ignore
                 return $fetch("", { baseURL: url, method: requestConfig.method, headers: {
                         "Authorization": token
                     }, body: data
+                }).catch((e) => { console.warn("Ошибка обращения к серверу", e);
+                  navigateTo('/');
                 });
             }
         } else if(token === null || token === undefined) {
             //@ts-ignore
-            return $fetch(url, { method: requestConfig.method, body: data});
+            return $fetch(url, { method: requestConfig.method, body: data}).
+            catch((e) => { console.warn("Ошибка обращения к серверу", e);
+              navigateTo('/');
+            });
         } else {
             //@ts-ignore
             return $fetch(url, { method: requestConfig.method, headers: {
                     "Authorization": token
                 }, body: data
+            }).catch((e) => { console.warn("Ошибка обращения к серверу", e);
+              navigateTo('/');
             });
         }
     }
@@ -192,3 +213,22 @@ export function truncate(str: string, maxlength: number) {
     return str;
 }
 
+export function getAiClient(): BusinessAiControllerClient {
+  const runtimeConfig = useRuntimeConfig();
+  return new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.public.businessHost));
+}
+
+export function getCommonDataClient(): CommonDataControllerClient {
+  const runtimeConfig = useRuntimeConfig();
+  return new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.public.businessHost));
+}
+
+export function getCommonClient(contentType: string | undefined = undefined): BusinessCommonControllerClient {
+  const runtimeConfig = useRuntimeConfig();
+  return new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.public.businessHost, contentType));
+}
+
+export function getFileSaveClient(): BusinessCommonControllerClient {
+  const runtimeConfig = useRuntimeConfig();
+  return new BusinessCommonControllerClient(new FileUploadClient(runtimeConfig.public.businessHost));
+}

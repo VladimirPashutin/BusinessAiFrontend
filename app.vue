@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import * as authUtils from "./auth.d.ts"
 const title = 'Бизнес-помощник'
 const description = 'Система продвижения бизнеса на основе искусственного интеллекта.'
 

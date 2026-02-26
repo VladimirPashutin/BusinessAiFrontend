@@ -1,13 +1,8 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import PublicationInfo from "~/components/PublicationInfo.vue";
-import {ApiHttpClient, PublicationInfoData} from "~/utils/clientProvider.ts";
-import {
-  type Assortment,
-  BusinessAiControllerClient,
-  BusinessCommonControllerClient,
-  type Organization
-} from "~/utils/apiQueries.ts";
+import {type Assortment, type Organization} from "~/utils/apiQueries.ts";
+import {ApiHttpClient, PublicationInfoData, getAiClient, getCommonClient, getCommonDataClient} from "~/utils/clientProvider.ts";
 
 const route = useRoute();
 const processLoading = ref(false);
@@ -22,20 +17,15 @@ const canNotRequestPublication = ref(false);
 
 onMounted(async () => {
   processLoading.value = true;
-  const runtimeConfig = useRuntimeConfig();
-  const commonClient = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  const businessClient = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  organization.value = await commonClient.getOrganizationByName(<string>route.params.orgName);
-  assortmentList.value = await commonClient.getAssortmentList(organization.value.id);
-  publicationsCount.value = await businessClient.getAllPublicationsCount();
+  organization.value = await getCommonClient().getOrganizationByName(<string>route.params.orgName);
+  assortmentList.value = await getCommonClient().getAssortmentList(organization.value.id);
+  publicationsCount.value = await getAiClient().getAllPublicationsCount();
   publications.value = Array.from({length: publicationsCount.value});
   await loadPublications({ first: 0, last: Math.min(publicationsCount.value, 100)})
 });
 
 const selectImageNames = async () => {
-  const runtimeConfig = useRuntimeConfig();
-  const client = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  imageNameList.value = await client.getAssortmentImages(selectedAssortment.value.id);
+  imageNameList.value = await getCommonClient().getAssortmentImages(selectedAssortment.value.id);
   selectedImageName.value = null;
 }
 
@@ -47,16 +37,13 @@ const loadPublications = async (event: { first: number, last: number }) => {
   if(Number.isNaN(first)) { offset = 0; }
   if(Number.isNaN(first) || Number.isNaN(last))
   { limit = publicationsCount.value; }
-  const runtimeConfig = useRuntimeConfig();
   let loadedPublications = [] as PublicationInfoData[];
   const _items = [...publications.value] as PublicationInfoData[];
-  const aiClient = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  const commonClient = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  const loadedItems = await aiClient.getAllPublications({ offset: offset, limit: limit});
+  const loadedItems = await getAiClient().getAllPublications({ offset: offset, limit: limit});
   for(let i = 0; i < loadedItems.length; i++) {
     const publication = loadedItems[i];
     const data = new PublicationInfoData({
-      description: (await commonClient.getAssortment(publication.assortmentId)).description,
+      description: (await getCommonClient().getAssortment(publication.assortmentId)).description,
       readyState: publication.readyState,
       title: publication.title,
       note: publication.note,
@@ -64,7 +51,7 @@ const loadPublications = async (event: { first: number, last: number }) => {
       images: [],
     })
     for(let j = 0; j < publication.images.length; j++) {
-      const imageBody = <Blob>await commonClient.getImage(publication.images[j]);
+      const imageBody = <Blob>await getCommonDataClient().getImage(publication.images[j]);
       if(imageBody.size > 0) { data.images.push(URL.createObjectURL(imageBody)); }
     }
     loadedPublications.push(data);
@@ -75,23 +62,21 @@ const loadPublications = async (event: { first: number, last: number }) => {
 };
 
 const deletePublication = async (publication: PublicationInfoData, index: number) => {
-  const runtimeConfig = useRuntimeConfig();
-  const client = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  await client.rejectPublication(publication.id);
+  await getAiClient().rejectPublication(publication.id);
   publications.value.splice(index, 1);
 }
 
 const requestPublication = async () => {
   canNotRequestPublication.value = true;
   const runtimeConfig = useRuntimeConfig();
-  const client = new ApiHttpClient(runtimeConfig.app.publicationHost);
+  const publicationClient = new ApiHttpClient(runtimeConfig.public.publicationHost);
   let uri = "publication/" + organization.value.strictOrgName;
   if(selectedAssortment.value !== null) {
     uri = uri + "/" + selectedAssortment.value.id;
     if(selectedImageName.value !== null)
     { uri = uri + "|" + selectedImageName.value; }
   }
-  try { await client.request({method: "POST", url: uri}); }
+  try { await publicationClient.request({method: "POST", url: uri}); }
   catch (error: unknown) { console.error("Can not make publication ", error); }
   finally { canNotRequestPublication.value = false; }
   reloadNuxtApp();

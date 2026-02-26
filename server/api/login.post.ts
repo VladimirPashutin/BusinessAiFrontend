@@ -5,10 +5,10 @@ import {LoginRequest} from "~/utils/apiQueries";
 export default defineEventHandler(async (event) => {
     try { const runtimeConfig = useRuntimeConfig();
         const credentials = await readRawBody(event) as string;
-        const loginRequest = new LoginRequest({application: runtimeConfig.app.applicationName,
+        const loginRequest = new LoginRequest({application: runtimeConfig.public.applicationName,
                                                credentials: credentials, authType: "BEARER", params: {}});
         // @ts-ignore
-        const data: UserSession.jwt = await $fetch(runtimeConfig.authHost + "auth/login",
+        const data: UserSession.jwt = await $fetch(runtimeConfig.innerAuthHost + "auth/login",
              { method: "POST", body: JSON.stringify(loginRequest),
                     headers: { "content-type": "application/json" } })
         if(data.accessToken !== null && data.refreshToken !== null) {
