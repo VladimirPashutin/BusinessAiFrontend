@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ApiHttpClient} from "~/utils/clientProvider.ts";
-import {makeCredentialsFromData} from "~/utils/login.d.ts";
+import {makeCredentialsFromData} from "~/utils/login.ts";
 import {AuthRegistrationControllerClient} from "~/utils/apiQueries.ts"
 
 const errorMessage = ref(<string | null>null);
@@ -27,7 +27,7 @@ const doChangePassword = async (form) => {
       id: <string>route.params.id
     });
     const runtimeConfig = useRuntimeConfig();
-    await new AuthRegistrationControllerClient(new ApiHttpClient(runtimeConfig.app.authHost)).changePassword(data);
+    await new AuthRegistrationControllerClient(new ApiHttpClient(runtimeConfig.public.authHost)).changePassword(data);
     close();
   }
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
-import {ApiHttpClient} from "~/utils/clientProvider.ts";
-import {type Organization, BusinessAiControllerClient} from "~/utils/apiQueries.ts";
+import {type Organization} from "~/utils/apiQueries.ts";
+import {getAiClient, getCommonClient} from "~/utils/clientProvider.ts";
 
 const route = useRoute();
 const processLoading = ref(false);
@@ -10,11 +10,8 @@ const organization = ref(null as any as Organization);
 
 onMounted(async () => {
   processLoading.value = true;
-  const runtimeConfig = useRuntimeConfig();
-  const commonClient = new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  const businessClient = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  organization.value = await commonClient.getOrganizationByName(<string>route.params.orgName);
-  const responsesCount = await businessClient.getAllResponsesCount();
+  organization.value = await getCommonClient().getOrganizationByName(<string>route.params.orgName);
+  const responsesCount = await getAiClient().getAllResponsesCount();
   responses.value = Array.from({length: responsesCount});
   await loadResponses({ first: 0, last: Math.min(responsesCount, 100)})
 });
@@ -26,19 +23,15 @@ const loadResponses = async (event: { first: number, last: number }) => {
   let offset = first;
   let limit = last - first;
   processLoading.value = true;
-  const runtimeConfig = useRuntimeConfig();
   const _items = [...responses.value] as GeneratedResponse[];
-  const controllerClient = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  const loadedItems = await controllerClient.getAllResponses({ offset: offset, limit: limit});
+  const loadedItems = await getAiClient().getAllResponses({ offset: offset, limit: limit});
   _items.splice(offset, limit, ...loadedItems);
   responses.value = _items;
   processLoading.value = false;
 };
 
 const deleteResponse = async (response: GeneratedResponse, index: number) => {
-  const runtimeConfig = useRuntimeConfig();
-  const client = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  await client.rejectResponse({id: response.id, platform: response.platform});
+  await getAiClient().rejectResponse({id: response.id, platform: response.platform});
   responses.value.splice(index, 1);
 }
 

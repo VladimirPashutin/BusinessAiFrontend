@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref,toRef} from "vue";
+import {ref, toRef} from "vue";
 
 defineEmits(['update']);
 const props = withDefaults(defineProps<{address: AddressObject,

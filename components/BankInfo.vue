@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {toRef, onMounted} from "vue";
+import {onMounted, toRef} from "vue";
 
 const emits = defineEmits(['update']);
 const props = defineProps<{bankDetails: BankingDetails, orgId: string}>();

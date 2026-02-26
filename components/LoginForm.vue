@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {Form} from "@primevue/forms";
-import {ref, computed} from "@vue/reactivity";
+import {computed, ref} from "@vue/reactivity";
 import {ApiHttpClient} from "../utils/clientProvider.ts";
 import {makeCredentialsByForm, makeCredentialsFromData} from "../utils/login.d.ts";
 import {AuthenticationControllerClient, AuthRegistrationControllerClient} from "../utils/apiQueries.ts"
@@ -27,15 +27,15 @@ const errorMessageText = computed(() => {
 });
 
 const [loginModel] = defineModel({
-  set(value) {
+  set(value: string) {
     if (value === null || value === undefined || value.length === 0) {
       validLogin.value = false;
       return value;
     }
     const runtimeConfig = useRuntimeConfig();
-    new AuthenticationControllerClient(new ApiHttpClient(runtimeConfig.app.authHost)).
+    new AuthenticationControllerClient(new ApiHttpClient(runtimeConfig.public.authHost)).
     isLoginExists({
-      application: runtimeConfig.app.applicationName,
+      application: runtimeConfig.public.applicationName,
       login: value
     }).catch((e) => {
       console.log("Ошибка проверки login-а " + e);
@@ -97,7 +97,7 @@ const doLogin = (form) => {
 const doRegistration = (form) => {
   const runtimeConfig = useRuntimeConfig();
   const registrationRequest = new RegistrationRequest({
-    application: runtimeConfig.app.applicationName,
+    application: runtimeConfig.public.applicationName,
     credentials: makeCredentialsByForm(form),
     organization: form.organization.value,
     patronymic: form.patronymic.value,
@@ -108,7 +108,7 @@ const doRegistration = (form) => {
     phone: form.phone.value,
     authType: "BEARER"
   });
-  new AuthRegistrationControllerClient(new ApiHttpClient(runtimeConfig.app.authHost)).
+  new AuthRegistrationControllerClient(new ApiHttpClient(runtimeConfig.public.authHost)).
       registration(registrationRequest).then((id) => {
     if (id) {
       showRegistrationInfo.value = true
@@ -120,10 +120,10 @@ const doRegistration = (form) => {
 const doRestorePassword = () => {
   const runtimeConfig = useRuntimeConfig();
   const restorePassword = new RestorePassword({
-    applicationName: runtimeConfig.app.applicationName,
+    applicationName: runtimeConfig.public.applicationName,
     login: <string>loginModel.value
   });
-  new AuthRegistrationControllerClient(new ApiHttpClient(runtimeConfig.app.authHost)).
+  new AuthRegistrationControllerClient(new ApiHttpClient(runtimeConfig.public.authHost)).
       restorePassword(restorePassword).
       then(() => showRestorePassword.value = true).
       catch(() => localError.value = "Непредвиденная ошибка при отправке письма для смены пароля");

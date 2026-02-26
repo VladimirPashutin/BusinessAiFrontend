@@ -1,6 +1,14 @@
 import {v4 as uuidv4} from "uuid";
-import { type HttpClient, type AddressObject, type Department, type Governance,
-         type Organization, type OrganizationRef, type RestResponse, BankingDetails
+import {
+    type AddressObject,
+    BankingDetails,
+    type Department,
+    type Governance,
+    type HttpClient,
+    type Organization,
+    type OrganizationRef,
+    type PublicationState,
+    type RestResponse
 } from "./apiQueries.ts";
 
 export class ApiHttpClient implements HttpClient {
@@ -15,21 +23,45 @@ export class ApiHttpClient implements HttpClient {
     async request<R>(requestConfig: {
         method: string; url: string; queryParams?: any;
         data?: any; copyFn?: (data: R) => R;
+    //@ts-ignore
     }): RestResponse<R> {
         let url = this.host + requestConfig.url;
         if (requestConfig.queryParams !== null && requestConfig.queryParams !== undefined) {
             url = url + "?" + new URLSearchParams(requestConfig.queryParams).toString();
         }
         let bodyData = requestConfig.data;
-        if (this.contentType === "application/json") {
+        if (this.contentType === "application/json" && requestConfig.data !== undefined) {
             bodyData = JSON.stringify(requestConfig.data);
         }
+        const { loggedIn } = useUserSession();
         const token = await $fetch("/api/refresh", {"method": "POST"});
         if(token === null || token === undefined) {
+            if(loggedIn.value) { navigateTo('/'); }
+            else if(bodyData === undefined) {
+                //@ts-ignore
+                return $fetch(url, { method: requestConfig.method, headers: {
+                        "content-type": this.contentType
+                    }
+                }).catch((e) => { console.warn("Ошибка обращения к серверу", e);
+                  navigateTo('/');
+                });
+            } else {
+                //@ts-ignore
+                return $fetch(url, { method: requestConfig.method, headers: {
+                        "content-type": this.contentType
+                    }, body: bodyData
+                }).catch((e) => { console.warn("Ошибка обращения к серверу", e);
+                  navigateTo('/');
+                });
+            }
+        } else if(bodyData === undefined) {
             //@ts-ignore
             return $fetch(url, { method: requestConfig.method, headers: {
-                    "content-type": this.contentType
-                }, body: bodyData
+                    "content-type": this.contentType,
+                    "Authorization": token
+                }
+            }).catch((e) => { console.warn("Ошибка обращения к серверу", e);
+              navigateTo('/');
             });
         } else {
             //@ts-ignore
@@ -37,6 +69,8 @@ export class ApiHttpClient implements HttpClient {
                     "content-type": this.contentType,
                     "Authorization": token
                 }, body: bodyData
+            }).catch((e) => { console.warn("Ошибка обращения к серверу", e);
+              navigateTo('/');
             });
         }
     }
@@ -56,31 +90,57 @@ export class FileUploadClient implements HttpClient {
         const keys = Object.keys(requestConfig.queryParams);
         const data = new FormData();
         keys.forEach(key => { data.append(key, requestConfig.queryParams[key])})
-        if (url.startsWith('http')) {
+        if(url.startsWith('http')) {
             if (token === null || token === undefined) {
                 //@ts-ignore
-                return $fetch("", { baseURL: url, method: requestConfig.method, body: data});
+                return $fetch("", { baseURL: url, method: requestConfig.method, body: data}).
+                catch((e) => { console.warn("Ошибка обращения к серверу", e);
+                  navigateTo('/');
+                });
             } else {
                 //@ts-ignore
                 return $fetch("", { baseURL: url, method: requestConfig.method, headers: {
                         "Authorization": token
                     }, body: data
+                }).catch((e) => { console.warn("Ошибка обращения к серверу", e);
+                  navigateTo('/');
                 });
             }
+        } else if(token === null || token === undefined) {
+            //@ts-ignore
+            return $fetch(url, { method: requestConfig.method, body: data}).
+            catch((e) => { console.warn("Ошибка обращения к серверу", e);
+              navigateTo('/');
+            });
         } else {
-            if (token === null || token === undefined) {
-                //@ts-ignore
-                return $fetch(url, { method: requestConfig.method, body: data});
-            } else {
-                //@ts-ignore
-                return $fetch(url, { method: requestConfig.method, headers: {
-                        "Authorization": token
-                    }, body: data
-                });
-            }
+            //@ts-ignore
+            return $fetch(url, { method: requestConfig.method, headers: {
+                    "Authorization": token
+                }, body: data
+            }).catch((e) => { console.warn("Ошибка обращения к серверу", e);
+              navigateTo('/');
+            });
         }
     }
 
+}
+
+export class PublicationInfoData {
+    readyState: PublicationState;
+    images: Array<string>;
+    description: string;
+    title: string;
+    note: string;
+    id: string;
+
+    constructor(data: PublicationInfoData) {
+        this.description = data.description;
+        this.readyState = data.readyState;
+        this.images = data.images;
+        this.title = data.title;
+        this.note = data.note;
+        this.id = data.id;
+    }
 }
 
 export const newAddress = (): AddressObject => {
@@ -90,8 +150,6 @@ export const newAddress = (): AddressObject => {
     }
 };
 
-// const strategies = (): AiStrategy[] => { return [] as AiStrategy[] };
-// const contacts = (): ContactInfo[] => { return [] as ContactInfo[] };
 export const departments = (): Department[] => { return [] as Department[] };
 export const governance = (): Governance => {
     return {
@@ -155,3 +213,22 @@ export function truncate(str: string, maxlength: number) {
     return str;
 }
 
+export function getAiClient(): BusinessAiControllerClient {
+  const runtimeConfig = useRuntimeConfig();
+  return new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.public.businessHost));
+}
+
+export function getCommonDataClient(): CommonDataControllerClient {
+  const runtimeConfig = useRuntimeConfig();
+  return new CommonDataControllerClient(new ApiHttpClient(runtimeConfig.public.businessHost));
+}
+
+export function getCommonClient(contentType: string | undefined = undefined): BusinessCommonControllerClient {
+  const runtimeConfig = useRuntimeConfig();
+  return new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.public.businessHost, contentType));
+}
+
+export function getFileSaveClient(): BusinessCommonControllerClient {
+  const runtimeConfig = useRuntimeConfig();
+  return new BusinessCommonControllerClient(new FileUploadClient(runtimeConfig.public.businessHost));
+}

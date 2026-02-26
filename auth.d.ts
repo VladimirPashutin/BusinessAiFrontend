@@ -1,11 +1,11 @@
 declare module '#auth-utils' {
-    interface User {
+    export interface User {
         communities: string[] | undefined;
         roles: string[] | undefined;
         name: string | undefined;
     }
 
-    interface UserSession {
+    export interface UserSession {
         jwt?: { accessToken: string;
             refreshToken: string;
         }
