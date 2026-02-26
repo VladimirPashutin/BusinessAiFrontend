@@ -1,21 +1,18 @@
 <script setup lang="ts">
 import {v4 as uuidv4} from 'uuid';
 import {onMounted, ref} from "vue";
-import {ApiHttpClient, FileUploadClient} from "~/utils/clientProvider.ts";
-import {type Assortment, BusinessCommonControllerClient} from "~/utils/apiQueries.ts";
-import AssortmentInfo, {type AssortmentData} from "~/components/AssortmentInfo.vue";
+import {type Assortment} from "~/utils/apiQueries.ts";
 import type {FileUploadSelectEvent} from "primevue/fileupload";
+import {getCommonClient, getCommonDataClient} from "~/utils/clientProvider.ts";
+import AssortmentInfo, {type AssortmentData} from "~/components/AssortmentInfo.vue";
 
 const route = useRoute();
 const organizationId = ref(null as any as string);
 const assortments = ref([] as Array<AssortmentData>);
 
 onMounted(async () => {
-  const runtimeConfig = useRuntimeConfig();
-  const commonClient = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  const getClient = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost, "image/"));
-  const organization = await commonClient.getOrganizationByName(<string>route.params.orgName);
-  const assortmentsList = await commonClient.getAssortmentList(organization.id);
+  const organization = await getCommonClient().getOrganizationByName(<string>route.params.orgName);
+  const assortmentsList = await getCommonClient().getAssortmentList(organization.id);
   organizationId.value = organization.id;
   for(let i = 0; i < assortmentsList.length; i++) {
     let images: Array<string | ArrayBuffer> = [];
@@ -23,10 +20,12 @@ onMounted(async () => {
       if(assortmentsList[i].images[j].startsWith("http") &&
          assortmentsList[i].images[j].includes("://"))
       { images.push(assortmentsList[i].images[j]); }
-      else { const response = <Blob>await getClient.getImage("assortment|" +
+      else { const response = <Blob>await getCommonDataClient().getImage("assortment|" +
                    assortmentsList[i].id + "|" + assortmentsList[i].images[j]);
         if(response.size > 0) { images.push(URL.createObjectURL(response)); }
-        else { await commonClient.deleteAssortmentImage(assortmentsList[i].id, assortmentsList[i].images[j]); }
+        else { await getCommonClient("image/").deleteAssortmentImage(
+               assortmentsList[i].id, assortmentsList[i].images[j]);
+        }
       }
     }
     assortments.value.push([assortmentsList[i], images]);
@@ -34,11 +33,9 @@ onMounted(async () => {
 });
 
 const deleteAssortment = async (assortment: Assortment) => {
-  const runtimeConfig = useRuntimeConfig();
-  const commonClient = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
   for(let image of assortment.images)
-  { await commonClient.deleteAssortmentImage(assortment.id, image); }
-  await commonClient.deleteAssortment(assortment.id);
+  { await getCommonClient().deleteAssortmentImage(assortment.id, image); }
+  await getCommonClient().deleteAssortment(assortment.id);
   let index: number = -1;
   for(let i = 0; i < assortments.value.length; i++) {
     if(assortments.value[i][0].id === assortment.id) {
@@ -50,10 +47,7 @@ const deleteAssortment = async (assortment: Assortment) => {
 }
 
 const loadAssortment = async (event: FileUploadSelectEvent) => {
-  const runtimeConfig = useRuntimeConfig();
-  console.log("Загрузка ассортимента из ", event.files);
-  const commonClient = new BusinessCommonControllerClient(new FileUploadClient(runtimeConfig.app.businessHost));
-  await commonClient.saveAssortmentsFromExcel(organizationId.value, { file: event.files[0] });
+  await getCommonClient().saveAssortmentsFromExcel(organizationId.value, { file: event.files[0] });
 }
 
 const addAssortment = () => {

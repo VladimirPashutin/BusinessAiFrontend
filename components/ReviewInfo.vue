@@ -1,23 +1,19 @@
 <script setup lang="ts">
 import {toRef} from "vue";
-import {ApiHttpClient} from "~/utils/clientProvider.ts";
-import {BusinessAiControllerClient, type GeneratedResponse} from "~/utils/apiQueries.ts";
+import {getAiClient} from "~/utils/clientProvider.ts";
+import {type GeneratedResponse} from "~/utils/apiQueries.ts";
 
 const props = defineProps<{response: GeneratedResponse, index: number}>();
 const response = toRef(props, 'response');
 const modified = ref(false);
 
 const approveResponse = async () => {
-  const runtimeConfig = useRuntimeConfig();
-  const client = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  await client.approveResponse({ id: response.value.id, platform: response.value.platform});
+  await getAiClient().approveResponse({ id: response.value.id, platform: response.value.platform});
   response.value.state = "READY";
 }
 
 const rejectResponse = async () => {
-  const runtimeConfig = useRuntimeConfig();
-  const client = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  await client.rejectResponse({ id: response.value.id, platform: response.value.platform});
+  await getAiClient().rejectResponse({ id: response.value.id, platform: response.value.platform});
   response.value.state = "REJECTED";
 }
 </script>

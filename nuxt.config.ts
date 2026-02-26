@@ -2,9 +2,7 @@
 import Aura from '@primevue/themes/aura';
 
 export default defineNuxtConfig({
-    compatibilityDate: "2025-01-31",
-
-    css: ['primeicons/primeicons.css'],
+    compatibilityDate: "2026-01-31",
 
     devServer: { host: 'localhost', port: 3000,
       cors: { origin: "*", methods: "*", allowHeaders: "*" }
@@ -16,10 +14,10 @@ export default defineNuxtConfig({
 
     nitro: {
       routeRules: {
-        '/ai/**': { proxy: 'http://localhost:8448/ai/**' },
-        '/auth/**': { proxy: 'http://localhost:8118/auth/**' },
-        '/business-common/**': { proxy: 'http://localhost:8448/business-common/**' },
-        '/common/**': { proxy: 'http://localhost:8448/common/**' }
+        '/business-common/**': { proxy: process.env.BUSINESS_HOST + 'business-common/**' },
+        '/common/**': { proxy: process.env.BUSINESS_HOST + 'common/**' },
+        '/ai/**': { proxy: process.env.BUSINESS_HOST + 'ai/**' },
+        '/auth/**': { proxy: process.env.AUTH_HOST + 'auth/**' }
       }
     },
 
@@ -225,14 +223,21 @@ export default defineNuxtConfig({
     },
 
     runtimeConfig: {
-        authHost: 'http://localhost:8118/',
-        app: {
-            applicationName: 'business-ai',
-            publicationHost: '/',
-            businessHost: '/',
-            authHost: '/'
-        }
+      innerAuthHost: process.env.INNER_AUTH_HOST,
+      public: {
+        applicationName: 'business-ai',
+        aiHost: process.env.AI_HOST,
+        authHost: process.env.AUTH_HOST,
+        businessHost: process.env.BUSINESS_HOST,
+        publicationHost: process.env.PUBLICATION_HOST
+      }
     },
 
-    ssr: true
+    ssr: true,
+
+    vite: {
+        optimizeDeps: {
+            include: ['eventemitter3', 'quill-delta'],
+        },
+    }
 })

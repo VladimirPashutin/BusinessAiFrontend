@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import {ref, toRef} from "vue";
 import type {Assortment} from "~/utils/apiQueries.ts";
-import {BusinessCommonControllerClient} from "~/utils/apiQueries.ts";
 import type {EditorTextChangeEvent} from "primevue/editor";
 import type {FileUploadSelectEvent} from "primevue/fileupload";
-import {ApiHttpClient, FileUploadClient} from "~/utils/clientProvider.ts";
+import {getCommonClient, getFileSaveClient} from "~/utils/clientProvider.ts";
 
 export type AssortmentData = [Assortment, Array<string | ArrayBuffer>];
 
@@ -33,15 +32,11 @@ const descriptionChanged =(event: EditorTextChangeEvent) => {
 }
 
 const saveModifications = async () => {
-  const runtimeConfig = useRuntimeConfig();
-  const saveClient = new BusinessCommonControllerClient(new FileUploadClient(runtimeConfig.app.businessHost));
-  const client = new BusinessCommonControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  await client.saveAssortment(orgId.value, assortmentData.value[0]);
+  await getCommonClient().saveAssortment(orgId.value, assortmentData.value[0]);
   for(let name of imagesForDelete)
-  { await client.deleteAssortmentImage(assortmentData.value[0].id, name); }
+  { await getCommonClient().deleteAssortmentImage(assortmentData.value[0].id, name); }
   for(let entry of unsavedImages) {
-    await saveClient.saveAssortmentImage(assortmentData.value[0].id, entry[0],
-         { orgId: orgId.value, file: entry[1]});
+    await getFileSaveClient().saveAssortmentImage(assortmentData.value[0].id, entry[0], { file: entry[1]});
   }
   modified.value = false;
   unsavedImages.clear();
@@ -75,7 +70,7 @@ const onLoadNewImage = (event: FileUploadSelectEvent) => {
 
 const deleteSelectedImage = () => {
   if(selectedImage.value === null) { return; }
-  imagesForDelete.push(assortmentData.value[0].images[selectedImage.value]);
+  imagesForDelete.push(assortmentData.value[0].images[selectedImage.value] ?? "");
   assortmentData.value[0].images.splice(selectedImage.value, 1);
   assortmentData.value[1].splice(selectedImage.value, 1);
   images.value = assortmentData.value[1];

@@ -19,7 +19,7 @@ const close = () => {
 
 onMounted( async () => {
   const runtimeConfig = useRuntimeConfig()
-  registrationAccepted.value = await new AuthRegistrationControllerClient(new ApiHttpClient(runtimeConfig.app.authHost)).
+  registrationAccepted.value = await new AuthRegistrationControllerClient(new ApiHttpClient(runtimeConfig.public.authHost)).
                                acceptRegistration(route.params.id);
 })
 </script>

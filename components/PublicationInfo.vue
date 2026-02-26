@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {toRef} from "vue";
-import {BusinessAiControllerClient} from "~/utils/apiQueries.ts";
-import {ApiHttpClient, PublicationInfoData} from "~/utils/clientProvider.ts";
+import {getAiClient, PublicationInfoData} from "~/utils/clientProvider.ts";
 
 const props = defineProps<{publication: PublicationInfoData, index: number}>();
 const publication = toRef(props, 'publication');
@@ -14,9 +13,7 @@ const considered = () => {
 }
 
 const approvePublication = async () => {
-  const runtimeConfig = useRuntimeConfig();
-  const client = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  await client.approvePublication(publication.value.id);
+  await getAiClient().approvePublication(publication.value.id);
   publication.value.readyState = "READY";
 }
 

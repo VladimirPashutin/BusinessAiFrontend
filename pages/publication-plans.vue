@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import {v4 as uuid} from 'uuid';
 import {onMounted, ref} from "vue";
-import {BusinessAiControllerClient, PublicationStrategy} from "~/utils/apiQueries.ts";
-import {ApiHttpClient} from "~/utils/clientProvider.ts";
+import {getAiClient} from "~/utils/clientProvider.ts";
+import {PublicationStrategy} from "~/utils/apiQueries.ts";
 
 const route = useRoute();
 const publicationStrategies = ref([] as Array<PublicationStrategy>);
 
 onMounted(async () => {
-  const runtimeConfig = useRuntimeConfig();
-  const client = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  publicationStrategies.value = await client.getPublicationPlans(<string>route.params.orgName);
+  publicationStrategies.value = await getAiClient().getPublicationPlans(<string>route.params.orgName);
 });
 
 const addPublicationStrategy = () => {
@@ -28,9 +26,7 @@ const addPublicationStrategy = () => {
 }
 
 const savePublicationStrategy = async (strategy: PublicationStrategy) => {
-  const runtimeConfig = useRuntimeConfig();
-  const client = new BusinessAiControllerClient(new ApiHttpClient(runtimeConfig.app.businessHost));
-  await client.savePublicationPlan(strategy);
+  await getAiClient().savePublicationPlan(strategy);
 }
 </script>
 
