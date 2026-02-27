@@ -670,113 +670,41 @@ export interface HttpClient {
     request<R>(requestConfig: { method: string; url: string; queryParams?: any; data?: any; copyFn?: (data: R) => R; }): RestResponse<R>;
 }
 
-export class BusinessAiControllerClient {
+export class AuthRegistrationControllerClient {
 
     constructor(protected httpClient: HttpClient) {
     }
 
     /**
-     * HTTP POST /ai/approvePublication/{id}
-     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.approvePublication
+     * HTTP GET /auth-registration/accept/{acceptId}
+     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.acceptRegistration
      */
-    approvePublication(id: string): RestResponse<void> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`ai/approvePublication/${id}` });
+    acceptRegistration(acceptId: string): RestResponse<boolean> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`auth-registration/accept/${acceptId}` });
     }
 
     /**
-     * HTTP POST /ai/approveResponse
-     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.approveResponse
+     * HTTP POST /auth-registration/changePassword
+     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.changePassword
      */
-    approveResponse(queryParams: { id: string; platform: string; }): RestResponse<void> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`ai/approveResponse`, queryParams: queryParams });
+    changePassword(arg0: ChangePassword): RestResponse<boolean> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth-registration/changePassword`, data: arg0 });
     }
 
     /**
-     * HTTP GET /ai/count-of-publications
-     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.getAllPublicationsCount
+     * HTTP POST /auth-registration/registration
+     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.registration
      */
-    getAllPublicationsCount(): RestResponse<number> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`ai/count-of-publications` });
+    registration(arg1: RegistrationRequest): RestResponse<string> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth-registration/registration`, data: arg1 });
     }
 
     /**
-     * HTTP GET /ai/count-of-responses
-     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.getAllResponsesCount
+     * HTTP POST /auth-registration/restorePassword
+     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.restorePassword
      */
-    getAllResponsesCount(): RestResponse<number> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`ai/count-of-responses` });
-    }
-
-    /**
-     * HTTP POST /ai/prompt
-     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.savePrompt
-     */
-    savePrompt(arg0: Prompt): RestResponse<void> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`ai/prompt`, data: arg0 });
-    }
-
-    /**
-     * HTTP GET /ai/prompt/{id}
-     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.getPrompt
-     */
-    getPrompt(id: string): RestResponse<Prompt> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`ai/prompt/${id}` });
-    }
-
-    /**
-     * HTTP GET /ai/prompts/{orgName}
-     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.getPrompts
-     */
-    getPrompts(orgName: string): RestResponse<Prompt[]> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`ai/prompts/${orgName}` });
-    }
-
-    /**
-     * HTTP POST /ai/publication-plan
-     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.savePublicationPlan
-     */
-    savePublicationPlan(arg0: PublicationStrategy): RestResponse<void> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`ai/publication-plan`, data: arg0 });
-    }
-
-    /**
-     * HTTP GET /ai/publication-plans/{orgName}
-     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.getPublicationPlans
-     */
-    getPublicationPlans(orgName: string): RestResponse<PublicationStrategy[]> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`ai/publication-plans/${orgName}` });
-    }
-
-    /**
-     * HTTP GET /ai/publications
-     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.getAllPublications
-     */
-    getAllPublications(queryParams: { offset: number; limit: number; }): RestResponse<PublicationsResponse[]> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`ai/publications`, queryParams: queryParams });
-    }
-
-    /**
-     * HTTP DELETE /ai/rejectPublication/{id}
-     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.rejectPublication
-     */
-    rejectPublication(id: string): RestResponse<void> {
-        return this.httpClient.request({ method: "DELETE", url: uriEncoding`ai/rejectPublication/${id}` });
-    }
-
-    /**
-     * HTTP DELETE /ai/rejectResponse
-     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.rejectResponse
-     */
-    rejectResponse(queryParams: { id: string; platform: string; }): RestResponse<void> {
-        return this.httpClient.request({ method: "DELETE", url: uriEncoding`ai/rejectResponse`, queryParams: queryParams });
-    }
-
-    /**
-     * HTTP GET /ai/responses
-     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.getAllResponses
-     */
-    getAllResponses(queryParams: { offset: number; limit: number; }): RestResponse<GeneratedResponse[]> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`ai/responses`, queryParams: queryParams });
+    restorePassword(arg1: RestorePassword): RestResponse<void> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth-registration/restorePassword`, data: arg1 });
     }
 }
 
@@ -807,44 +735,6 @@ export class AuthAdministrationControllerClient {
      */
     setRegistrationInfo(arg0: RegistrationInfo): RestResponse<void> {
         return this.httpClient.request({ method: "POST", url: uriEncoding`auth-admin/updateRegistrationInfo`, data: arg0 });
-    }
-}
-
-export class AuthenticationControllerClient {
-
-    constructor(protected httpClient: HttpClient) {
-    }
-
-    /**
-     * HTTP GET /auth/isLoginExists
-     * Java method: ru.pashutin.auth.controller.AuthenticationController.isLoginExists
-     */
-    isLoginExists(queryParams: { application: string; login: string; }): RestResponse<boolean> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`auth/isLoginExists`, queryParams: queryParams });
-    }
-
-    /**
-     * HTTP POST /auth/login
-     * Java method: ru.pashutin.auth.controller.AuthenticationController.login
-     */
-    login(arg1: LoginRequest): RestResponse<LoginResponse> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/login`, data: arg1 });
-    }
-
-    /**
-     * HTTP POST /auth/refresh
-     * Java method: ru.pashutin.auth.controller.AuthenticationController.getNewRefreshToken
-     */
-    getNewRefreshToken(arg0: RefreshRequest): RestResponse<LoginResponse> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/refresh`, data: arg0 });
-    }
-
-    /**
-     * HTTP POST /auth/token
-     * Java method: ru.pashutin.auth.controller.AuthenticationController.getNewAccessToken
-     */
-    getNewAccessToken(arg0: string): RestResponse<string> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/token`, data: arg0 });
     }
 }
 
@@ -964,41 +854,151 @@ export class BusinessCommonControllerClient {
     }
 }
 
-export class AuthRegistrationControllerClient {
+export class BusinessAiControllerClient {
 
     constructor(protected httpClient: HttpClient) {
     }
 
     /**
-     * HTTP GET /auth-registration/accept/{acceptId}
-     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.acceptRegistration
+     * HTTP POST /ai/approvePublication/{id}
+     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.approvePublication
      */
-    acceptRegistration(acceptId: string): RestResponse<boolean> {
-        return this.httpClient.request({ method: "GET", url: uriEncoding`auth-registration/accept/${acceptId}` });
+    approvePublication(id: string): RestResponse<void> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`ai/approvePublication/${id}` });
     }
 
     /**
-     * HTTP POST /auth-registration/changePassword
-     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.changePassword
+     * HTTP POST /ai/approveResponse
+     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.approveResponse
      */
-    changePassword(arg0: ChangePassword): RestResponse<boolean> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth-registration/changePassword`, data: arg0 });
+    approveResponse(queryParams: { id: string; platform: string; }): RestResponse<void> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`ai/approveResponse`, queryParams: queryParams });
     }
 
     /**
-     * HTTP POST /auth-registration/registration
-     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.registration
+     * HTTP GET /ai/count-of-publications
+     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.getAllPublicationsCount
      */
-    registration(arg1: RegistrationRequest): RestResponse<string> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth-registration/registration`, data: arg1 });
+    getAllPublicationsCount(): RestResponse<number> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`ai/count-of-publications` });
     }
 
     /**
-     * HTTP POST /auth-registration/restorePassword
-     * Java method: ru.pashutin.auth.controller.AuthRegistrationController.restorePassword
+     * HTTP GET /ai/count-of-responses
+     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.getAllResponsesCount
      */
-    restorePassword(arg1: RestorePassword): RestResponse<void> {
-        return this.httpClient.request({ method: "POST", url: uriEncoding`auth-registration/restorePassword`, data: arg1 });
+    getAllResponsesCount(): RestResponse<number> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`ai/count-of-responses` });
+    }
+
+    /**
+     * HTTP POST /ai/prompt
+     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.savePrompt
+     */
+    savePrompt(arg0: Prompt): RestResponse<void> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`ai/prompt`, data: arg0 });
+    }
+
+    /**
+     * HTTP GET /ai/prompt/{id}
+     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.getPrompt
+     */
+    getPrompt(id: string): RestResponse<Prompt> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`ai/prompt/${id}` });
+    }
+
+    /**
+     * HTTP GET /ai/prompts/{orgName}
+     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.getPrompts
+     */
+    getPrompts(orgName: string): RestResponse<Prompt[]> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`ai/prompts/${orgName}` });
+    }
+
+    /**
+     * HTTP POST /ai/publication-plan
+     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.savePublicationPlan
+     */
+    savePublicationPlan(arg0: PublicationStrategy): RestResponse<void> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`ai/publication-plan`, data: arg0 });
+    }
+
+    /**
+     * HTTP GET /ai/publication-plans/{orgName}
+     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.getPublicationPlans
+     */
+    getPublicationPlans(orgName: string): RestResponse<PublicationStrategy[]> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`ai/publication-plans/${orgName}` });
+    }
+
+    /**
+     * HTTP GET /ai/publications
+     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.getAllPublications
+     */
+    getAllPublications(queryParams: { offset: number; limit: number; }): RestResponse<PublicationsResponse[]> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`ai/publications`, queryParams: queryParams });
+    }
+
+    /**
+     * HTTP DELETE /ai/rejectPublication/{id}
+     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.rejectPublication
+     */
+    rejectPublication(id: string): RestResponse<void> {
+        return this.httpClient.request({ method: "DELETE", url: uriEncoding`ai/rejectPublication/${id}` });
+    }
+
+    /**
+     * HTTP DELETE /ai/rejectResponse
+     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.rejectResponse
+     */
+    rejectResponse(queryParams: { id: string; platform: string; }): RestResponse<void> {
+        return this.httpClient.request({ method: "DELETE", url: uriEncoding`ai/rejectResponse`, queryParams: queryParams });
+    }
+
+    /**
+     * HTTP GET /ai/responses
+     * Java method: ru.pashutin.business_ai.controller.BusinessAiController.getAllResponses
+     */
+    getAllResponses(queryParams: { offset: number; limit: number; }): RestResponse<GeneratedResponse[]> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`ai/responses`, queryParams: queryParams });
+    }
+}
+
+export class AuthenticationControllerClient {
+
+    constructor(protected httpClient: HttpClient) {
+    }
+
+    /**
+     * HTTP GET /auth/isLoginExists
+     * Java method: ru.pashutin.auth.controller.AuthenticationController.isLoginExists
+     */
+    isLoginExists(queryParams: { application: string; login: string; }): RestResponse<boolean> {
+        return this.httpClient.request({ method: "GET", url: uriEncoding`auth/isLoginExists`, queryParams: queryParams });
+    }
+
+    /**
+     * HTTP POST /auth/login
+     * Java method: ru.pashutin.auth.controller.AuthenticationController.login
+     */
+    login(arg1: LoginRequest): RestResponse<LoginResponse> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/login`, data: arg1 });
+    }
+
+    /**
+     * HTTP POST /auth/refresh
+     * Java method: ru.pashutin.auth.controller.AuthenticationController.getNewRefreshToken
+     */
+    getNewRefreshToken(arg0: RefreshRequest): RestResponse<LoginResponse> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/refresh`, data: arg0 });
+    }
+
+    /**
+     * HTTP POST /auth/token
+     * Java method: ru.pashutin.auth.controller.AuthenticationController.getNewAccessToken
+     */
+    getNewAccessToken(arg0: string): RestResponse<string> {
+        return this.httpClient.request({ method: "POST", url: uriEncoding`auth/token`, data: arg0 });
     }
 }
 
