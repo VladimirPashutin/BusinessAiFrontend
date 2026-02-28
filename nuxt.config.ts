@@ -223,12 +223,12 @@ export default defineNuxtConfig({
     },
 
     runtimeConfig: {
+      innerAuthHost: process.env.INNER_AUTH_HOST,
       public: {
         applicationName: 'business-ai',
         aiHost: process.env.AI_HOST,
         authHost: process.env.AUTH_HOST,
         businessHost: process.env.BUSINESS_HOST,
-        innerAuthHost: process.env.INNER_AUTH_HOST,
         publicationHost: process.env.PUBLICATION_HOST
       }
     },
