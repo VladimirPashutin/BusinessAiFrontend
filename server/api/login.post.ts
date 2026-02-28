@@ -7,9 +7,8 @@ export default defineEventHandler(async (event) => {
         const credentials = await readRawBody(event) as string;
         const loginRequest = new LoginRequest({application: runtimeConfig.public.applicationName,
                                                credentials: credentials, authType: "BEARER", params: {}});
-        console.log("Login by " + runtimeConfig.public.innerAuthHost);
         // @ts-ignore
-        const data: UserSession.jwt = await $fetch(runtimeConfig.public.innerAuthHost + "auth/login",
+        const data: UserSession.jwt = await $fetch(runtimeConfig.innerAuthHost + "auth/login",
              { method: "POST", body: JSON.stringify(loginRequest),
                     headers: { "content-type": "application/json" } })
         if(data.accessToken !== null && data.refreshToken !== null) {

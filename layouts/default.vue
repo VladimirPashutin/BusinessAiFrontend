@@ -81,13 +81,6 @@ const mainMenuCommonItems = ref([
     }
   },
   {
-    label: 'Лицевой счёт',
-    icon: 'pi pi-money-bill',
-    command: async ()  => {
-      navigateTo('/account/' + getOrgName())
-    }
-  },
-  {
     label: 'Номенклатура продукции/услуг',
     icon: 'pi pi-gift',
     command: async ()  => {

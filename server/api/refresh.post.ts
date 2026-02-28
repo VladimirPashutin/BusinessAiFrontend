@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
             refreshToken: tokens.refreshToken,
             accessToken: tokens.accessToken
         })
-        const data: UserSession["jwt"] = await $fetch(runtimeConfig.public.innerAuthHost + "auth/refresh",
+        const data: UserSession["jwt"] = await $fetch(runtimeConfig.innerAuthHost + "auth/refresh",
                                         { method: "POST", body: JSON.stringify(request) });
         if(data === undefined) {
             await clearUserSession(event);
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
             return data.accessToken;
         }
     } else if(accessExpiration < Date.now() / 1000 + 60) {
-        const accessToken = await $fetch(runtimeConfig.public.innerAuthHost + "auth/token",
+        const accessToken = await $fetch(runtimeConfig.innerAuthHost + "auth/token",
             { method: "POST", body: tokens.refreshToken }).catch((e) => {
                 console.warn("Ошибка обновления токена", e);
                 clearUserSession(event);
